@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "script2stlite"
+version = "0.1.0"
+description = "Package to convert a script and files to an stlite app (https://github.com/whitphx/stlite)"
+authors = ["LukeAFullard <LukeAFullard@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.08"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
