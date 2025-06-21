@@ -1,0 +1,7 @@
+APP_NAME: ""  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
+  - streamlit
+APP_ENTRYPOINT: home.py #entrypoint to app - main python file
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - test1.py #additional files for the conversion to find and include.
+  - pages/test_subpage.py #you can include subpages...

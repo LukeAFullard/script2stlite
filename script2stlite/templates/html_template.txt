@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>|APP_NAME|</title>
+    <link
+      rel="stylesheet"
+      href="|STLITE_CSS|"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "|STLITE_JS|"
+mount(
+  {
+    requirements: |APP_REQUIREMENTS|,
+    entrypoint: "|APP_ENTRYPOINT|",
+    files: {
+"|APP_ENTRYPOINT|": `
+|APP_HOME|
+`,
+|APP_FILES|
+},
+  },
+  document.getElementById("root")
+)
+
+function Qu(e){const t=window.atob(e),n=t.length,r=new Uint8Array(n);for(let i=0;i<n;i++)r[i]=t.charCodeAt(i);return r}
+    </script>
+  </body>
+  <!-- We love stlite! https://github.com/whitphx/stlite and Pyodide https://github.com/pyodide/pyodide -->
+</html>
