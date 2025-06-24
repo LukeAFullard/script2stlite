@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.08"
 PyYAML >= "6.0.0" 
+requests = "^2.27.0"
 
 
 [build-system]
