@@ -1,7 +1,10 @@
 import requests
 import yaml
 import os
+import shutil
 from typing import Any, Dict, Tuple, Union
+from pathlib import Path
+
 stylesheet_url = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/stylesheet.yaml'
 js_url = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/js.yaml'
 
@@ -186,3 +189,126 @@ def file_exists(path: Union[str, bytes, os.PathLike]) -> bool:
     """
     return os.path.isfile(path)
 ###############################################################################
+def get_current_directory() -> str:
+    """
+    Return the current working directory.
+
+    Returns
+    -------
+    str
+        The absolute path to the current working directory.
+    """
+    return os.getcwd()
+
+def create_directory(path: Union[str, bytes, os.PathLike], exist_ok: bool = True) -> bool:
+    """
+    Create a directory at the specified path, including any necessary parent directories.
+
+    Parameters
+    ----------
+    path : Union[str, bytes, os.PathLike]
+        The path of the directory to create.
+    exist_ok : bool, optional
+        If True, do not raise an error if the directory already exists (default is True).
+
+    Returns
+    -------
+    bool
+        True if the directory exists or was created successfully.
+        False if directory creation failed.
+    """
+    try:
+        os.makedirs(path, exist_ok=exist_ok)
+        return True
+    except OSError as e:
+        print(f"Error creating directory '{path}': {e}")
+        return False
+###############################################################################    
+def copy_file_from_subfolder(
+    subfolder: Union[str, os.PathLike],
+    filename: str,
+    destination_dir: Union[str, os.PathLike]
+) -> bool:
+    """
+    Copy a file from a subfolder (relative to this script) to a user-defined directory.
+
+    Parameters
+    ----------
+    subfolder : Union[str, os.PathLike]
+        The name or path of the subfolder relative to the script.
+    filename : str
+        The name of the file to copy (e.g., 'asettings.yaml').
+    destination_dir : Union[str, os.PathLike]
+        The directory where the file should be copied to.
+
+    Returns
+    -------
+    bool
+        True if the file was copied successfully, False if an error occurred.
+    """
+    try:
+        # Resolve the absolute path to the source file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        source_file = os.path.join(script_dir, subfolder, filename)
+
+        if not os.path.isfile(source_file):
+            raise FileNotFoundError(f"Source file not found: {source_file}")
+
+        # Ensure destination directory exists
+        path_exists = folder_exists(destination_dir)
+        
+        if path_exists:
+            # Define the destination path
+            destination_file = os.path.join(destination_dir, filename)
+    
+            # Copy the file
+            shutil.copy2(source_file, destination_file)
+        else:
+            print(f"Destination folder, {destination_dir} does not exist.")
+            return False
+
+        return True
+    except Exception as e:
+        print(f"Error copying file: {e}")
+        return False
+    
+def load_text_from_subfolder(
+    subfolder: Union[str, os.PathLike],
+    filename: str,
+    encoding: str = "utf-8"
+) -> str:
+    """
+    Load a text file from a subfolder (relative to this script) and return its contents as a string.
+
+    Parameters
+    ----------
+    subfolder : Union[str, os.PathLike]
+        The name or relative path of the subfolder where the file is located.
+    filename : str
+        The name of the text file to load.
+    encoding : str, optional
+        The file encoding to use (default is 'utf-8').
+
+    Returns
+    -------
+    str
+        The contents of the text file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the text file does not exist.
+    IOError
+        If there is an error reading the file.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, subfolder, filename)
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"Text file not found: {file_path}")
+
+    with open(file_path, "r", encoding=encoding) as f:
+        content = f.read()
+
+    return content    
+###############################################################################        
