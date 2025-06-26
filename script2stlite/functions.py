@@ -6,8 +6,8 @@ from typing import Any, Dict, Tuple, Union
 from pathlib import Path
 
 stylesheet_url = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/stylesheet.yaml'
-js_url = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/js.yaml'
-
+js_url         = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/js.yaml'
+pyodide_url    = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/pyodide.yaml'
 
 def get_value_of_max_key(data: Dict[Any, Any]) -> Any:
     """
@@ -127,11 +127,34 @@ def load_js(url: str = js_url, timeout: int = 10) -> Tuple[Dict[str, Any], Any]:
     js_top_version: Any = get_value_of_max_key(js_versions)
     return js_versions, js_top_version
 
-def load_all_versions(stylesheet_url: str = stylesheet_url, js_url: str = js_url, timeout: int = 10
+def load_pyodide(url: str = pyodide_url, timeout: int = 10) -> Tuple[Dict[str, Any], Any]:
+    """
+    Load the Pyodide version dictionary from a YAML file at the specified URL,
+    and return both the full dictionary and the value corresponding to the maximum version key.
+
+    Parameters
+    ----------
+    url : str
+        The URL pointing to the raw YAML Pyodide version file.
+    timeout : int
+        Timeout in seconds for the HTTP request.
+
+    Returns
+    -------
+    Tuple[Dict[str, Any], Any]
+        A tuple containing:
+        - The full Pyodide version dictionary
+        - The value corresponding to the maximum key
+    """
+    pyodide_versions: Dict[str, Any] = load_yaml_from_url(url=url, timeout=timeout)
+    pyodide_top_version: Any = get_value_of_max_key(pyodide_versions)
+    return pyodide_versions, pyodide_top_version
+
+def load_all_versions(stylesheet_url: str = stylesheet_url, js_url: str = js_url, pyd_url: str = pyodide_url, timeout: int = 10
                       ) -> Tuple[Dict[str, Any], Any, Dict[str, Any], Any]:
     """
-    Load both stylesheet and JavaScript version dictionaries from their respective YAML files,
-    and return both dictionaries and their top-version values.
+    Load stylesheet, Pyodide and JavaScript version dictionaries from their respective YAML files,
+    and return dictionaries and their top-version values.
 
     Parameters
     ----------
@@ -139,6 +162,8 @@ def load_all_versions(stylesheet_url: str = stylesheet_url, js_url: str = js_url
         The URL pointing to the raw YAML stylesheet version file.
     js_url : str
         The URL pointing to the raw YAML JavaScript version file.
+    pyd_url : str
+        The URL pointing to the raw YAML Pyodide version file.
     timeout : int
         Timeout in seconds for the HTTP requests.
 
@@ -150,10 +175,13 @@ def load_all_versions(stylesheet_url: str = stylesheet_url, js_url: str = js_url
         - Stylesheet top version value
         - JavaScript version dictionary
         - JavaScript top version value
+        - Pyodide version dictionary
+        - Pyodide top version value
     """
     stylesheet_versions, stylesheet_top_version = load_stylesheet(url=stylesheet_url, timeout=timeout)
     js_versions, js_top_version = load_js(url=js_url, timeout=timeout)
-    return stylesheet_versions, stylesheet_top_version, js_versions, js_top_version
+    pyodide_versions, pyodide_top_version = load_pyodide(url = pyd_url, timeout=timeout)
+    return stylesheet_versions, stylesheet_top_version, js_versions, js_top_version, pyodide_versions, pyodide_top_version
 
 ###############################################################################
 def folder_exists(path: Union[str, bytes, os.PathLike]) -> bool:
