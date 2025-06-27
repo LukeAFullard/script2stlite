@@ -4,6 +4,7 @@ import os
 import shutil
 from typing import Any, Dict, Tuple, Union
 from pathlib import Path
+import base64
 
 stylesheet_url = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/stylesheet.yaml'
 js_url         = r'https://raw.githubusercontent.com/LukeAFullard/script2stlite/refs/heads/main/stlite_versions/js.yaml'
@@ -73,6 +74,43 @@ def load_yaml_from_url(url: str, timeout: int = 10) -> Dict[str, Any]:
         data: Any = yaml.safe_load(response.text)
     except yaml.YAMLError as e:
         raise RuntimeError(f"Failed to parse YAML content from {url}: {e}") from e
+
+    if not isinstance(data, dict):
+        raise ValueError("YAML content is not a dictionary (mapping type)")
+
+    return data
+
+def load_yaml_from_file(path: Union[str, os.PathLike]) -> Dict[str, Any]:
+    """
+    Load a YAML file from the local file system and return its contents as a Python dictionary.
+
+    Parameters
+    ----------
+    path : Union[str, os.PathLike]
+        The path to the local YAML file.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The parsed contents of the YAML file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist.
+    RuntimeError
+        If the YAML content cannot be parsed.
+    ValueError
+        If the content is not a dictionary (mapping type).
+    """
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"YAML file not found: {path}")
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data: Any = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise RuntimeError(f"Failed to parse YAML content from {path}: {e}") from e
 
     if not isinstance(data, dict):
         raise ValueError("YAML content is not a dictionary (mapping type)")
@@ -339,4 +377,27 @@ def load_text_from_subfolder(
         content = f.read()
 
     return content    
-###############################################################################        
+###############################################################################  
+
+
+def file_to_ou_base64_string(file_path: str) -> str:
+    """
+    Convert a binary file into a base64-encoded string suitable for use inside Ou("...").
+
+    This is used to embed binary assets (e.g. images, PDFs, models) into stlite apps
+    by including them as virtual filesystem files preloaded via stlite.embed().
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the binary file.
+
+    Returns
+    -------
+    str
+        A base64-encoded string ready to be inserted inside Ou("...").
+    """
+    with open(file_path, "rb") as f:
+        encoded: bytes = base64.b64encode(f.read())
+        return encoded.decode("utf-8")
+      
