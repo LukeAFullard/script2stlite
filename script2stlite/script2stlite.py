@@ -1,4 +1,4 @@
-from functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,file_to_ou_base64_string
+from functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
 import os
 from pathlib import Path
 
@@ -23,7 +23,7 @@ def s2s_prepare_folder(directory = None):
 
 
 
-def s2s_convert(stlite_version = None, pyodide_version = None, directory = None):
+def s2s_convert(stlite_version = None, pyodide_version = None, directory = None, packages = None):
     #0. read/set directory
     if directory is not None: #directory is provided
         #check provided directory is valid
@@ -50,13 +50,20 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     if not file_exists(os.path.join(directory,'settings.yaml')): raise ValueError(f"* No settings file found in {directory}. Please run s2s_prepare_folder().")
     settings = load_yaml_from_file(os.path.join(directory,'settings.yaml'))
     
-    #if app entrypoint not in app files, add it in
-    if settings.get('APP_ENTRYPOINT') not in settings.get('APP_FILES'): settings.get('APP_FILES').append(settings.get('APP_ENTRYPOINT'))
+    #Update css, js, pyodide versions into settings
+    settings.update({"|STLITE_CSS|":stylesheet})
+    settings.update({"|STLITE_JS|":js})
+    settings.update({"|PYODIDE_VERSION|":pyodide})
+    
+    #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template. 
+    if settings.get('APP_ENTRYPOINT') in settings.get('APP_FILES'): settings.get('APP_FILES').remove(settings.get('APP_ENTRYPOINT'))
     
     # 3. Check that all files exist.
     for file_j in settings.get('APP_FILES'):
         if not file_exists(os.path.join(directory,file_j)): raise ValueError(f"* File {file_j} not found in {directory}.")
         
-        #add next line later when adding files into html
-        #if not Path(file_j).suffix == '.py': file_to_ou_base64_string(os.path.join(directory,file_j))
+    # 4. generate html
+    html = create_html(directory,settings,packages=packages)
+    write_text_file(os.path.join(directory,f'{settings.get("APP_NAME")}.html'), html)
+    
     

@@ -117,6 +117,37 @@ def load_yaml_from_file(path: Union[str, os.PathLike]) -> Dict[str, Any]:
 
     return data
 
+def load_text_from_file(path: Union[str, os.PathLike]) -> str:
+    """
+    Load a plain text file from the local file system and return its contents as a string.
+
+    Parameters
+    ----------
+    path : Union[str, os.PathLike]
+        The path to the local text file.
+
+    Returns
+    -------
+    str
+        The contents of the text file as a string.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist.
+    RuntimeError
+        If the file cannot be read.
+    """
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Text file not found: {path}")
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except Exception as e:
+        raise RuntimeError(f"Failed to read text from {path}: {e}") from e
+
+    return text
 
 def load_stylesheet(url: str = stylesheet_url, timeout: int = 10) -> Tuple[Dict[str, Any], Any]:
     """
@@ -400,4 +431,77 @@ def file_to_ou_base64_string(file_path: str) -> str:
     with open(file_path, "rb") as f:
         encoded: bytes = base64.b64encode(f.read())
         return encoded.decode("utf-8")
-      
+############################################################################### 
+def write_text_file(filename: str, content: str) -> str:
+    try:
+        with open(filename, 'w') as f:
+            f.write(content)
+        print(f"Content successfully written to {filename}")
+    except IOError:
+        print(f"Error writing to {filename}")
+def replace_text(input_text: str, replace_flag: str, replace_text: str, add_stlite_punctuation: bool= True ) -> str:
+    if add_stlite_punctuation: return input_text.replace(replace_flag,"`" + replace_text + "`,")
+    else: return input_text.replace(replace_flag,replace_text)        
+
+def create_html(directory,app_settings,packages=None):
+    if packages is None: packages = {}
+    #1 load html file
+    html = load_text_from_subfolder(subfolder='templates',filename='html_template.txt')
+    
+    #2) replace css
+    if app_settings.get('|STLITE_CSS|') is not None:
+        html = replace_text(html, '|STLITE_CSS|', app_settings.get('|STLITE_CSS|'), add_stlite_punctuation = False)
+    else: raise ValueError("No stlite css version defined.")
+        
+    
+    #3) replace JS
+    if app_settings.get('|STLITE_JS|') is not None:
+        html = replace_text(html, '|STLITE_JS|', app_settings.get('|STLITE_JS|'), add_stlite_punctuation = False)
+    else: raise ValueError("No stlite JS version defined.")
+    
+    #4) replace Pyodide
+    if app_settings.get('|PYODIDE_VERSION|') is not None:
+        html = replace_text(html, '|PYODIDE_VERSION|', app_settings.get('|PYODIDE_VERSION|'), add_stlite_punctuation = False)
+    else: raise ValueError("No stlite Pyodide version defined.")
+    
+    #5) replace '|APP_NAME|'
+    if app_settings.get('|APP_NAME|') is not None:
+        html = replace_text(html, '|APP_NAME|', app_settings.get('|APP_NAME|'), add_stlite_punctuation = False)
+    else:
+        html = replace_text(html, '|APP_NAME|', '', add_stlite_punctuation = False)
+        
+    #6) replace '|APP_REQUIREMENTS|'
+    if app_settings.get('|APP_REQUIREMENTS|') is not None:
+        package_requirements = [packages.get(x,x) for x in app_settings.get('|APP_REQUIREMENTS|')] # note, the dictionary packages allows us to define specific package versions. Not necessary, but may be useful one day.
+        package_requirements = str(package_requirements)
+        html = replace_text(html, '|APP_REQUIREMENTS|', package_requirements, add_stlite_punctuation = False)
+    else:
+        html = replace_text(html, '|APP_REQUIREMENTS|', '[]', add_stlite_punctuation = False)    
+        
+    #7) replace '|APP_ENTRYPOINT|' 
+    if app_settings.get('|APP_ENTRYPOINT|') is not None:
+        html = replace_text(html, '|APP_ENTRYPOINT|', app_settings.get('|APP_ENTRYPOINT|'), add_stlite_punctuation = False)
+    else:
+        html = replace_text(html, '|APP_ENTRYPOINT|', '', add_stlite_punctuation = False)
+    
+    #8) replace '|APP_HOME|'
+    #check is a py file
+    if not Path(os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))).suffix == '.py': raise ValueError(f"APP ENTRYPOINT must be a .py file: {os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))}")
+    html = replace_text(html, '|APP_HOME|', load_text_from_file(os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))), add_stlite_punctuation = False)   
+    
+    #9) replace '|APP_FILES|' 
+    app_files = ''
+    if app_settings.get('|APP_FILES|') is not None:
+        for file_j in app_settings.get('|APP_FILES|'):
+            if not Path(os.path.join(directory,file_j)).suffix == '.py': 
+                binary_text = file_to_ou_base64_string(os.path.join(directory,file_j))
+                app_files += f'"{file_j}":' + 'Ou("' + binary_text + '"),'
+            else:
+                app_files += f'"{file_j}":' + '`' + load_text_from_file(file_j) + '`,'
+    html = replace_text(html, '|APP_FILES|', app_files, add_stlite_punctuation = False)   
+    
+    #10) return html
+    return html
+        
+    
+    
