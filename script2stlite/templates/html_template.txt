@@ -21,6 +21,7 @@ mount(
   {
     requirements: |APP_REQUIREMENTS|,
     entrypoint: "|APP_ENTRYPOINT|",
+    |PYODIDE_VERSION|
     files: {
 "|APP_ENTRYPOINT|": `
 |APP_HOME|
