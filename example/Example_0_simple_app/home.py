@@ -10,6 +10,6 @@ df = random_pandas_dataframe()
 st.write(df)
 
 #show an image
-st.write("The image below in in the assets folder, but is embededinto the html file.")
+st.write("The image below in in the assets folder, but is embeded into the html file.")
 st.image("assets/image.jpg")
 
