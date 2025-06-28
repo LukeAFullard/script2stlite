@@ -16,10 +16,10 @@ st.write(
 
 # Allowed file types
 ALLOWED_TYPES = ['jpg', 'jpeg', 'png']
-TEST_IMAGE_PATH = "example/Example_1_multi_page_image_editor/assets/image.jpg" # Path relative to repo root
+TEST_IMAGE_PATH = "example/Example_1_multi_page_image_editor/assets/image.png" # Path relative to repo root
 
 # --- Test Image Loading Function ---
-def load_and_store_image(image_path, default_name="test_image.jpg"):
+def load_and_store_image(image_path, default_name="test_image.png"):
     try:
         with open(image_path, "rb") as f:
             img_bytes = f.read()
