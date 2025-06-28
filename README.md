@@ -20,120 +20,92 @@ You can install `script2stlite` using pip:
 pip install script2stlite
 ```
 
-## Quick Start
+## Quick Start with `Example_0_simple_app`
 
-Here's how to get started with `script2stlite`:
+This quick start guide uses the example application located in the `example/Example_0_simple_app` directory of this repository.
 
-### 1. Prepare Your Project Folder
+### 1. Initialize the Converter and Prepare the Folder
 
-First, you need a directory for your Streamlit application. `script2stlite` uses a class `Script2StliteConverter` to manage project setup and conversion.
+First, you'll use the `Script2StliteConverter` class. Point it to the directory containing the example application. Then, call `prepare_folder()` to ensure the necessary `settings.yaml` file is present (it will be created from a template if it doesn't exist) and a `pages` subdirectory is available.
 
 ```python
 from script2stlite import Script2StliteConverter
 
-# Initialize the converter, optionally specifying a target directory.
-# If no directory is provided, it defaults to the current working directory.
-converter = Script2StliteConverter(directory="/home/my_stlite_app")
+# Initialize the converter with the path to the example app
+# If you have cloned the repository, this path will be relative to the repo root.
+converter = Script2StliteConverter(directory="example/Example_0_simple_app")
 
-# This will set a system folder, 'my_stlite_app', as the target directory.
-# A 'pages' subdirectory will be created inside it (if it does not exist), and a template 'settings.yaml' file (if it does not already exist).
+# Prepare the folder. This creates 'settings.yaml' if it's missing
+# and ensures a 'pages' directory exists.
+# For this example, 'settings.yaml' is already provided.
 converter.prepare_folder()
 ```
 
-This sets up the basic structure needed for your `stlite` application.
+### 2. Review `settings.yaml`
 
-### 2. Configure `settings.yaml`
-
-The `s2s_prepare_folder` command creates a `settings.yaml` file in your project directory. You'll need to customize this file. Here’s an example:
+The `prepare_folder()` step ensures a `settings.yaml` file is in place. For `Example_0_simple_app`, the `settings.yaml` file looks like this:
 
 ```yaml
-APP_NAME: "My Awesome Stlite App"
-APP_ENTRYPOINT: "streamlit_app.py"  # Your main Streamlit script
-APP_REQUIREMENTS:
-  - "streamlit"
-  - "pandas"
-  - "numpy"
-  # Add any other packages your app needs
-APP_FILES:
-  - "pages/01_📊_Data_Explorer.py" # For multi-page apps
-  - "pages/02_ℹ️_About.py"
-  - "utils/helpers.py"          # Other Python modules
-  - "data/my_data.csv"          # Data files
-  - "assets/logo.png"           # Image assets
-# - "models/model.pkl"          # Binary files like pickled models (will be base64 encoded)
+APP_NAME: "my simple app"  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
+  - streamlit
+  - pandas
+  - numpy
+APP_ENTRYPOINT: home.py #entrypoint to app - main python file
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - functions.py #additional files for the conversion to find and include.
+  - assets/image.jpg
 ```
 
-**Explanation of `settings.yaml` fields:**
+**Key fields in this example:**
+*   `APP_NAME`: "my simple app" - This will be used for the HTML file name and page title.
+*   `APP_REQUIREMENTS`: Lists `streamlit`, `pandas`, and `numpy`.
+*   `APP_ENTRYPOINT`: `home.py` - This is the main script for the Streamlit app.
+*   `APP_FILES`: Includes `functions.py` (a supporting Python module) and `assets/image.jpg` (an image asset).
 
-*   `APP_NAME`: The name of your application. This will be used as the title of the generated HTML page and the filename.
-*   `APP_ENTRYPOINT`: The main Python script for your Streamlit application (e.g., `streamlit_app.py`). This path is relative to your project directory (where `settings.yaml` is located).
-*   `APP_REQUIREMENTS`: A list of Python packages required by your application. These packages must be Pyodide-compatible.
-*   `APP_FILES`: A list of other files and directories to include in the `stlite` bundle. All paths are relative to your project directory.
-    *   For multi-page Streamlit apps, include your page scripts here, typically located in a `pages` subdirectory (e.g., `pages/page1.py`, `pages/page2.py`).
-    *   You can also include other Python modules, data files (CSV, JSON, etc.), and assets (images, etc.).
-    *   Binary files (e.g., `.png`, `.jpg`, `.pkl`) will be base64 encoded and embedded into the HTML. Python (`.py`) and text-based files (`.csv`, `.txt`, etc.) will be embedded as raw text.
+### 3. Review the Streamlit Application Code
 
-Make sure all files listed in `APP_ENTRYPOINT` and `APP_FILES` exist at their specified paths relative to your project directory.
+The main application script for this example is `example/Example_0_simple_app/home.py`:
 
-### 3. Create Your Streamlit App Files
-
-Create your main Streamlit script (e.g., `streamlit_app.py`) and any other scripts or files (like those in the `pages` directory or data files) that your application needs.
-
-**Example `streamlit_app.py`:**
 ```python
 import streamlit as st
-import pandas as pd
+from functions import random_pandas_dataframe
 
-st.title("Simple Stlite App")
+#say something
+st.write("This text is from home.py")
 
-st.write("Welcome to your Streamlit app running in the browser!")
+#get a dataframe
+st.write("The dataframe below is from functions.py")
+df = random_pandas_dataframe()
+st.write(df)
 
-# Example: Load data if 'data/my_data.csv' is in APP_FILES
-try:
-    df = pd.read_csv("data/my_data.csv")
-    st.dataframe(df)
-except FileNotFoundError:
-    st.warning("data/my_data.csv not found. Add it to your project and settings.yaml.")
-except Exception as e:
-    st.error(f"Could not load data/my_data.csv: {e}")
-
-
-name = st.text_input("Enter your name:", "World")
-st.write(f"Hello, {name}!")
+#show an image
+st.write("The image below in in the assets folder, but is embeded into the html file.")
+st.image("assets/image.jpg")
 ```
-
-**Example `pages/01_📊_Data_Explorer.py` (for a multi-page app):**
-```python
-import streamlit as st
-
-st.set_page_config(page_title="Data Explorer", layout="wide")
-
-st.title("📊 Data Explorer")
-st.write("This is a page in your multi-page app!")
-# Add more Streamlit components here
-```
+This script imports a function from `functions.py` (which is listed in `APP_FILES`), displays some text, shows a Pandas DataFrame, and an image.
 
 ### 4. Convert Your Project to HTML
 
-Once your `settings.yaml` is configured and your app files are ready, you can convert the project into a single HTML file using the `convert` method of your `Script2StliteConverter` instance.
+With the folder prepared and settings reviewed, you can convert the project into a single HTML file using the `convert()` method:
 
 ```python
-# Assuming 'converter' is the Script2StliteConverter instance from step 1,
-# and you have configured "my_stlite_app/settings.yaml" and created your app files.
-# For example:
-# from script2stlite import Script2StliteConverter
-# converter = Script2StliteConverter(directory="my_stlite_app")
-# (after settings.yaml and app files are ready in "my_stlite_app")
-
+# Assuming 'converter' is the Script2StliteConverter instance from Step 1.
 converter.convert()
-# This will read 'settings.yaml' from 'my_stlite_app',
-# bundle all specified files, and generate 'My Awesome Stlite App.html'
-# (or whatever APP_NAME is) inside the 'my_stlite_app' directory.
+
+# This will read 'settings.yaml' from 'example/Example_0_simple_app',
+# bundle all specified files, and generate 'my_simple_app.html'
+# inside the 'example/Example_0_simple_app' directory.
 ```
 
-The `Script2StliteConverter` class is the primary way to interact with `script2stlite`. While functional equivalents like `s2s_prepare_folder` and `s2s_convert` exist, using the class provides a more cohesive workflow, especially if you need to perform multiple operations or manage state.
+After running this, you will find `my_simple_app.html` in the `example/Example_0_simple_app` directory. You can open this file in any modern web browser to run the Streamlit application.
 
-After conversion, you can open the generated HTML file in any modern web browser to run your Streamlit application.
+You can also view a hosted version of this example here:
+[https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html](https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html)
+
+## Other Examples
+
+For more examples (as they become available), please check the `example` directory in this repository. Each subfolder there will typically contain a self-contained Streamlit application ready for conversion with `script2stlite`.
 
 ## How it Works
 
