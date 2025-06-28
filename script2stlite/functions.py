@@ -575,9 +575,9 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
         for file_j in app_settings.get('APP_FILES'):
             if not Path(os.path.join(directory,file_j)).suffix == '.py': 
                 binary_text = file_to_ou_base64_string(os.path.join(directory,file_j))
-                app_files += f'"{file_j}":' + 'Ou("' + binary_text + '"),'
+                app_files += f'"{file_j}":' + ' Ou("' + binary_text + '"),'
             else:
-                app_files += f'"{file_j}":' + '`' + load_text_from_file(file_j) + '`,'
+                app_files += f'"{file_j}":' + '`' + load_text_from_file(os.path.join(directory,file_j)) + '`,'
     html = replace_text(html, '|APP_FILES|', app_files, add_stlite_punctuation = False)   
     
     #10) return html
