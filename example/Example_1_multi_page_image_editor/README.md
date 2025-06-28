@@ -14,7 +14,6 @@ The Image Editor application has the following structure:
     -   `02_Upload_Image.py`: Page for uploading images.
     -   `03_Adjust_Image.py`: Page for performing image adjustments like brightness, contrast, rotation, and grayscale.
 -   `assets/`: Contains static assets, like a sample image (`image.png`).
--   `requirements.txt`: Lists the Python dependencies (Pillow for image manipulation).
 -   `settings.yaml`: The configuration file for `script2stlite`.
 
 ## Steps to Convert This Streamlit App
@@ -59,8 +58,6 @@ APP_FILES:
   - pages/02_Upload_Image.py
   - pages/03_Adjust_Image.py
   - assets/image.png
-  # requirements.txt is processed separately by script2stlite if present,
-  # but can also be listed here if needed for other reasons.
 ```
 
 Key aspects for a multi-page app:
@@ -70,7 +67,6 @@ Key aspects for a multi-page app:
 -   **`APP_ENTRYPOINT`**: This should be your main script, typically the one that might contain `st.set_page_config()` and acts as the primary entry point. For multi-page apps, this is often a small `app.py` or similar, while individual pages reside in the `pages/` directory.
 -   **`APP_FILES`**: This is where you list all the Python files for each page within the `pages` directory. You also include any assets like images or data files.
     -   `script2stlite` automatically recognizes and processes the `pages/` directory convention for Streamlit multi-page apps if your entry point and page files are structured correctly. Listing them explicitly ensures they are included.
-    -   If a `requirements.txt` file is present in the directory, `script2stlite` will also attempt to install packages from it. It's good practice to also list them under `APP_REQUIREMENTS` for clarity and control, especially regarding versions.
 
 ### 4. Convert the Application to HTML
 
