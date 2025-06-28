@@ -117,19 +117,33 @@ def load_yaml_from_file(path: Union[str, os.PathLike]) -> Dict[str, Any]:
 
     return data
 
-def load_text_from_file(path: Union[str, os.PathLike]) -> str:
+def load_text_from_file(
+    path: Union[str, os.PathLike],
+    escape_text: bool = True,
+    escape_string_map: Dict[str, str] = {
+        "\\": "\\\\",
+        "`": "\\`",
+        "${": "\\${"
+    }
+    ) -> str:
     """
     Load a plain text file from the local file system and return its contents as a string.
+    Optionally escape specified substrings in the text.
 
     Parameters
     ----------
     path : Union[str, os.PathLike]
         The path to the local text file.
+    escape_text : bool, optional
+        Whether to apply escaping to the text content (default is True).
+    escape_string_map : Dict[str, str], optional
+        A dictionary of substrings to escape and their replacements 
+        (default is escaping for "\", "`", and "${").
 
     Returns
     -------
     str
-        The contents of the text file as a string.
+        The contents of the text file as a string (escaped if specified).
 
     Raises
     ------
@@ -146,6 +160,10 @@ def load_text_from_file(path: Union[str, os.PathLike]) -> str:
             text = f.read()
     except Exception as e:
         raise RuntimeError(f"Failed to read text from {path}: {e}") from e
+
+    if escape_text:
+        for target, replacement in escape_string_map.items():
+            text = text.replace(target, replacement)
 
     return text
 
