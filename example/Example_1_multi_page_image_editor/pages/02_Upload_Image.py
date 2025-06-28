@@ -38,7 +38,7 @@ def load_and_store_image(image_path, default_name="test_image.png"):
             del st.session_state['adjustment_params']
 
         st.success(f"'{default_name}' loaded successfully! Format: {image.format}. You can now go to the 'Adjust Image' page.")
-        st.image(image, caption=f"Loaded: {default_name}", use_column_width=True)
+        st.image(image, caption=f"Loaded: {default_name}", use_container_width=True)
         # It might be good to clear uploaded_file if it was set by st.file_uploader
         # However, st.rerun() might be needed, or careful state management.
         # For now, loading test image will overwrite previous upload.
@@ -93,7 +93,7 @@ if uploaded_file is not None:
             del st.session_state['adjustment_params']
 
         st.success(f"'{file_name}' uploaded successfully! Format: {image.format}. You can now go to the 'Adjust Image' page.")
-        st.image(image, caption=f"Uploaded: {file_name}", use_column_width=True)
+        st.image(image, caption=f"Uploaded: {file_name}", use_container_width=True)
 
     except IOError:
         st.error("The uploaded file is not a valid image or is corrupted. Please try another file.")
@@ -118,7 +118,7 @@ if 'uploaded_image_bytes' in st.session_state and uploaded_file is None:
     st.write("Current image in session:")
     try:
         current_img_preview = Image.open(io.BytesIO(st.session_state['uploaded_image_bytes']))
-        st.image(current_img_preview, caption=f"Current: {st.session_state.get('uploaded_image_name', 'N/A')}", use_column_width=True)
+        st.image(current_img_preview, caption=f"Current: {st.session_state.get('uploaded_image_name', 'N/A')}", use_container_width=True)
 
         col1, col2 = st.columns([0.7, 0.3])
         with col1:
