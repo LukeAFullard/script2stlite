@@ -1,0 +1,10 @@
+APP_NAME: "Image Editor"  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
+  - streamlit
+  - Pillow
+APP_ENTRYPOINT: app.py #entrypoint to app - change this to your main python file
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - pages/01_Home.py #additional files for the conversion to find and include. Here are some examples.
+  - pages/02_Upload_Image.py #you can include subpages...
+  - pages/03_Adjust_Image.py #you can include subpages...
+  - assets/image.png #you can include non python files - they will be embedded in the html in binary format
