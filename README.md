@@ -6,7 +6,7 @@ This allows you to easily share or deploy your Streamlit apps as static web page
 
 This project was created to easily allow **existing** streamlit apps to be converted to stlite web apps. Another GREAT way to generate stlite web apps is using [https://edit.share.stlite.net/](https://edit.share.stlite.net/)  
 
-The creator of stlite and edit.share.stlite.net/ is [Yuichiro Tachibana (whitphx))](https://github.com/whitphx/stlite)
+The creator of stlite and edit.share.stlite.net is [Yuichiro Tachibana (whitphx)](https://github.com/whitphx/stlite)
 
 ## Features
 
