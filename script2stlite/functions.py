@@ -545,34 +545,34 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
     else: raise ValueError("No stlite Pyodide version defined.")
     
     #5) replace '|APP_NAME|'
-    if app_settings.get('|APP_NAME|') is not None:
-        html = replace_text(html, '|APP_NAME|', app_settings.get('|APP_NAME|'), add_stlite_punctuation = False)
+    if app_settings.get('APP_NAME') is not None:
+        html = replace_text(html, '|APP_NAME|', app_settings.get('APP_NAME'), add_stlite_punctuation = False)
     else:
         html = replace_text(html, '|APP_NAME|', '', add_stlite_punctuation = False)
         
     #6) replace '|APP_REQUIREMENTS|'
-    if app_settings.get('|APP_REQUIREMENTS|') is not None:
-        package_requirements = [packages.get(x,x) for x in app_settings.get('|APP_REQUIREMENTS|')] # note, the dictionary packages allows us to define specific package versions. Not necessary, but may be useful one day.
+    if app_settings.get('APP_REQUIREMENTS') is not None:
+        package_requirements = [packages.get(x,x) for x in app_settings.get('APP_REQUIREMENTS')] # note, the dictionary packages allows us to define specific package versions. Not necessary, but may be useful one day.
         package_requirements = str(package_requirements)
         html = replace_text(html, '|APP_REQUIREMENTS|', package_requirements, add_stlite_punctuation = False)
     else:
         html = replace_text(html, '|APP_REQUIREMENTS|', '[]', add_stlite_punctuation = False)    
         
     #7) replace '|APP_ENTRYPOINT|' 
-    if app_settings.get('|APP_ENTRYPOINT|') is not None:
-        html = replace_text(html, '|APP_ENTRYPOINT|', app_settings.get('|APP_ENTRYPOINT|'), add_stlite_punctuation = False)
+    if app_settings.get('APP_ENTRYPOINT') is not None:
+        html = replace_text(html, '|APP_ENTRYPOINT|', app_settings.get('APP_ENTRYPOINT'), add_stlite_punctuation = False)
     else:
         html = replace_text(html, '|APP_ENTRYPOINT|', '', add_stlite_punctuation = False)
     
     #8) replace '|APP_HOME|'
     #check is a py file
-    if not Path(os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))).suffix == '.py': raise ValueError(f"APP ENTRYPOINT must be a .py file: {os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))}")
-    html = replace_text(html, '|APP_HOME|', load_text_from_file(os.path.join(directory,app_settings.get('|APP_ENTRYPOINT|'))), add_stlite_punctuation = False)   
+    if not Path(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))).suffix == '.py': raise ValueError(f"APP ENTRYPOINT must be a .py file: {os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))}")
+    html = replace_text(html, '|APP_HOME|', load_text_from_file(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))), add_stlite_punctuation = False)   
     
     #9) replace '|APP_FILES|' 
     app_files = ''
-    if app_settings.get('|APP_FILES|') is not None:
-        for file_j in app_settings.get('|APP_FILES|'):
+    if app_settings.get('APP_FILES') is not None:
+        for file_j in app_settings.get('APP_FILES'):
             if not Path(os.path.join(directory,file_j)).suffix == '.py': 
                 binary_text = file_to_ou_base64_string(os.path.join(directory,file_j))
                 app_files += f'"{file_j}":' + 'Ou("' + binary_text + '"),'

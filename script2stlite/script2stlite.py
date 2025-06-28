@@ -139,7 +139,7 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
         
     # 4. generate html
     html = create_html(directory,settings,packages=packages)
-    write_text_file(os.path.join(directory,f'{settings.get("APP_NAME")}.html'), html)
+    write_text_file(os.path.join(directory,f'{settings.get("APP_NAME").replace(" ","_")}.html'), html)
 
 
 class Script2StliteConverter:
