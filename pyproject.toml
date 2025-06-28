@@ -1,9 +1,11 @@
 [tool.poetry]
 name = "script2stlite"
 version = "0.1.0"
-description = "Package to convert a script and files to an stlite app (https://github.com/whitphx/stlite)"
-authors = ["LukeAFullard <LukeAFullard@gmail.com>"]
+description = "Package to convert a streamlit script and files to an stlite app (https://github.com/whitphx/stlite)"
+authors = ["LukeAFullard"]
 readme = "README.md"
+repository = "https://github.com/LukeAFullard/script2stlite"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.08"
