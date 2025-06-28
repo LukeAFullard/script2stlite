@@ -2,7 +2,9 @@
 
 A Python package to convert Streamlit applications into single, self-contained HTML files that run entirely in the browser using [stlite](https://github.com/whitphx/stlite).
 
-This allows you to easily share or deploy your Streamlit apps as static web pages without needing a Python backend server.
+This allows you to easily share or deploy your Streamlit apps as static web pages without needing a Python backend server.  
+
+This project was created to easily allow **existing** streamlit apps to be converted to stlite web apps. Another GREAT way to generate stlite web apps is using [https://edit.share.stlite.net/](https://edit.share.stlite.net/)
 
 ## Features
 
