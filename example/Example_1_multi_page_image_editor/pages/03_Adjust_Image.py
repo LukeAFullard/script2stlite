@@ -125,12 +125,12 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Original Image")
-    st.image(original_pil_image, caption=f"Original: {original_image_name}", use_column_width=True)
+    st.image(original_pil_image, caption=f"Original: {original_image_name}", use_container_width=True)
 
 with col2:
     st.subheader("Adjusted Image")
     if adjusted_image_bytes:
-        st.image(adjusted_image_bytes, caption="Adjusted Preview", use_column_width=True)
+        st.image(adjusted_image_bytes, caption="Adjusted Preview", use_container_width=True)
 
         # Prepare filename for download
         base, ext = os.path.splitext(original_image_name)
