@@ -33,10 +33,10 @@ from script2stlite import Script2StliteConverter
 
 # Initialize the converter, optionally specifying a target directory.
 # If no directory is provided, it defaults to the current working directory.
-converter = Script2StliteConverter(directory="my_stlite_app")
+converter = Script2StliteConverter(directory="/home/my_stlite_app")
 
-# This will create 'my_stlite_app' (if it doesn't exist),
-# a 'pages' subdirectory inside it, and a template 'settings.yaml' file.
+# This will set a system folder, 'my_stlite_app', as the target directory.
+# A 'pages' subdirectory will be created inside it (if it does not exist), and a template 'settings.yaml' file (if it does not already exist).
 converter.prepare_folder()
 ```
 
@@ -204,22 +204,22 @@ from script2stlite import Script2StliteConverter
 
 converter = Script2StliteConverter(directory="my_stlite_app")
 
-# Example: Pin stlite to version 0.46.0 and Pyodide to 0.23.4
+# Example: Pin stlite to version 0.82.0 and Pyodide to 0.27.4
 # Ensure settings.yaml and app files are ready in "my_stlite_app" first.
 # converter.prepare_folder() # if needed
 converter.convert(
-    stlite_version="0.46.0",  # Check available stlite versions
-    pyodide_version="0.23.4"  # Check available Pyodide versions compatible with stlite
+    stlite_version="0.82.0",  # Check available stlite versions
+    pyodide_version="0.27.4"  # Check available Pyodide versions compatible with stlite
 )
 ```
 
-`script2stlite` comes with lists of known compatible versions (see `stlite_versions` directory in the package). If you specify a version not listed, it might lead to errors if the CDN links are incorrect or the versions are incompatible. By default, the latest known compatible versions are used.
+`script2stlite` comes with lists of known compatible versions (see `stlite_versions` directory in the repository). If you specify a version not listed, it might lead to errors if the CDN links are incorrect or the versions are incompatible. By default, the latest known compatible versions are used.
 
-### Overriding Package Versions in Requirements (Conceptual)
+### Overriding Package Versions in Requirements
 
 The `Script2StliteConverter.convert()` method includes a `packages` parameter (a dictionary). This parameter is intended for fine-grained control over package versions, potentially overriding what's listed in `APP_REQUIREMENTS` or how they are formatted for `micropip`.
 
-**Example (Illustrative):**
+**Example:**
 
 ```python
 from script2stlite import Script2StliteConverter
@@ -236,7 +236,7 @@ converter.convert(
 
 In this example, if `APP_REQUIREMENTS` in `settings.yaml` just listed `pandas` and `numpy`, the `packages` argument would provide more specific version constraints for `micropip`.
 
-However, for most use cases, defining your requirements directly in the `APP_REQUIREMENTS` list in `settings.yaml` with appropriate version specifiers (e.g., `pandas==1.5.3`, `matplotlib>=3.5`) is the recommended approach. The `packages` parameter offers an override mechanism primarily for scenarios where `settings.yaml` cannot be easily modified or for programmatic adjustments.
+However, for most use cases, defining your requirements directly in the `APP_REQUIREMENTS` list in `settings.yaml` with appropriate version specifiers (e.g., `pandas==1.5.3`, `matplotlib>=3.5`) is the recommended approach. The `packages` parameter offers an override mechanism primarily for scenarios where the user would like to keepa series of stlite apps on the same package versions. In theory this should reduce loading time for users since a single version of a package is downloaded, rather than multiple versions.
 
 ## Contributing
 
@@ -245,9 +245,7 @@ Contributions are welcome! If you have suggestions for improvements, new feature
 1.  Open an issue to discuss the change.
 2.  Fork the repository and submit a pull request.
 
-Please ensure that your code adheres to standard Python conventions and include tests if applicable.
-
-(If a `CONTRIBUTING.md` file exists with more detailed guidelines, it would be linked here.)
+Please ensure that your code adheres to standard Python conventions.
 
 ## License
 

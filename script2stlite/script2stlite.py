@@ -1,7 +1,7 @@
 from functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
 import os
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Dict
 
 def s2s_prepare_folder(directory: Optional[str] = None) -> None:
     """
@@ -204,6 +204,6 @@ class Script2StliteConverter:
         s2s_convert(
             stlite_version=stlite_version,
             pyodide_version=pyodide_version,
-            directory=directory,
+            directory=self.directory,
             packages=packages
         )
