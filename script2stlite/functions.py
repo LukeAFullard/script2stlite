@@ -432,21 +432,101 @@ def file_to_ou_base64_string(file_path: str) -> str:
         encoded: bytes = base64.b64encode(f.read())
         return encoded.decode("utf-8")
 ############################################################################### 
-def write_text_file(filename: str, content: str) -> str:
+def write_text_file(filename: str, content: str) -> None:
+    """
+    Write text content to a file.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the file to write to.
+    content : str
+        The text content to write to the file.
+
+    Returns
+    -------
+    None
+    """
     try:
         with open(filename, 'w') as f:
             f.write(content)
         print(f"Content successfully written to {filename}")
     except IOError:
         print(f"Error writing to {filename}")
-def replace_text(input_text: str, replace_flag: str, replace_text: str, add_stlite_punctuation: bool= True ) -> str:
-    if add_stlite_punctuation: return input_text.replace(replace_flag,"`" + replace_text + "`,")
-    else: return input_text.replace(replace_flag,replace_text)        
 
-def create_html(directory,app_settings,packages=None):
-    if packages is None: packages = {}
+def replace_text(input_text: str, replace_flag: str, replacement_text: str, add_stlite_punctuation: bool = True) -> str:
+    """
+    Replace a specific flag in the input text with replacement text.
+
+    Optionally adds stlite-specific backticks and commas around the replacement text.
+
+    Parameters
+    ----------
+    input_text : str
+        The original text.
+    replace_flag : str
+        The substring to be replaced.
+    replacement_text : str
+        The text to insert in place of the replace_flag.
+    add_stlite_punctuation : bool, optional
+        If True (default), encloses the replacement_text with backticks and a trailing comma
+        (e.g., "`replacement_text`,"). Otherwise, inserts replacement_text as is.
+
+    Returns
+    -------
+    str
+        The text with replacements made.
+    """
+    if add_stlite_punctuation:
+        return input_text.replace(replace_flag, f"`{replacement_text}`,")
+    else:
+        return input_text.replace(replace_flag, replacement_text)
+
+def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Dict[str, str], None] = None) -> str:
+    """
+    Generates an HTML file content for an stlite application.
+
+    This function takes directory, application settings, and optional package information
+    to populate an HTML template. It replaces placeholders in the template with
+    actual values like CSS links, JS links, Pyodide version, application name,
+    requirements, entrypoint, main application script content, and other files.
+
+    Parameters
+    ----------
+    directory : str
+        The root directory of the application where 'settings.yaml' and other app files are located.
+    app_settings : Dict[str, Any]
+        A dictionary containing application settings, typically loaded from 'settings.yaml'.
+        Expected keys include:
+        - '|STLITE_CSS|': URL for the stlite CSS file.
+        - '|STLITE_JS|': URL for the stlite JavaScript file.
+        - '|PYODIDE_VERSION|': Version of Pyodide to use.
+        - '|APP_NAME|': Name of the application.
+        - '|APP_REQUIREMENTS|': A list of Python package requirements.
+        - '|APP_ENTRYPOINT|': The main Python script for the application (e.g., 'streamlit_app.py').
+        - '|APP_FILES|': A list of other files to include in the stlite bundle.
+    packages : Union[Dict[str, str], None], optional
+        A dictionary mapping package names to specific versions. If None (default),
+        the latest versions specified in requirements are used. This allows for
+        pinning package versions if needed.
+
+    Returns
+    -------
+    str
+        The generated HTML content as a string.
+
+    Raises
+    ------
+    ValueError
+        If essential settings like CSS, JS, Pyodide version, or app entrypoint are missing,
+        or if the app entrypoint is not a '.py' file.
+    FileNotFoundError
+        If the HTML template or specified application files are not found.
+    """
+    if packages is None:
+        packages = {}
     #1 load html file
-    html = load_text_from_subfolder(subfolder='templates',filename='html_template.txt')
+    html = load_text_from_subfolder(subfolder='templates', filename='html_template.txt')
     
     #2) replace css
     if app_settings.get('|STLITE_CSS|') is not None:
