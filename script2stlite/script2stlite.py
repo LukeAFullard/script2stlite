@@ -1,8 +1,38 @@
 from functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
 import os
 from pathlib import Path
+from typing import Union, Optional
 
-def s2s_prepare_folder(directory = None):
+def s2s_prepare_folder(directory: Optional[str] = None) -> None:
+    """
+    Prepares a folder for a script2stlite project.
+
+    This function performs the following actions:
+    1. Determines the target directory: Uses the provided `directory` or defaults
+       to the current working directory if `directory` is None.
+    2. Validates directory: If a directory is provided, it checks if it exists.
+    3. Creates 'pages' subdirectory: Ensures a 'pages' subdirectory exists within
+       the target directory, creating it if necessary.
+    4. Copies 'settings.yaml': If 'settings.yaml' does not already exist in the
+       target directory, it copies a template 'settings.yaml' file into it.
+       If 'settings.yaml' already exists, it prints a message and does not overwrite.
+
+    Parameters
+    ----------
+    directory : Optional[str], optional
+        The path to the directory where the project folder structure should be
+        prepared. If None (default), the current working directory is used.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If the provided `directory` does not exist or if there's an issue
+        copying the 'settings.yaml' template file.
+    """
     #1. check if user provided a directory (or we will use current dir)
     if directory is not None: #directory is provided
         #check provided directory is valid
@@ -19,11 +49,106 @@ def s2s_prepare_folder(directory = None):
     else: print(f"* settings.yaml already exists in {directory}. NO NEW FILE CREATED. \n")        
     print(f"* Folder structure successfully created: {directory}. \n")
 
-        
+import os
+from pathlib import Path
+from typing import Union, Optional, Dict, Any
+
+def s2s_prepare_folder(directory: Optional[str] = None) -> None:
+    """
+    Prepares a folder for a script2stlite project.
+
+    This function performs the following actions:
+    1. Determines the target directory: Uses the provided `directory` or defaults
+       to the current working directory if `directory` is None.
+    2. Validates directory: If a directory is provided, it checks if it exists.
+    3. Creates 'pages' subdirectory: Ensures a 'pages' subdirectory exists within
+       the target directory, creating it if necessary.
+    4. Copies 'settings.yaml': If 'settings.yaml' does not already exist in the
+       target directory, it copies a template 'settings.yaml' file into it.
+       If 'settings.yaml' already exists, it prints a message and does not overwrite.
+
+    Parameters
+    ----------
+    directory : Optional[str], optional
+        The path to the directory where the project folder structure should be
+        prepared. If None (default), the current working directory is used.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If the provided `directory` does not exist or if there's an issue
+        copying the 'settings.yaml' template file.
+    """
+    #1. check if user provided a directory (or we will use current dir)
+    if directory is not None: #directory is provided
+        #check provided directory is valid
+        if not folder_exists(directory): raise ValueError(f'''* {directory} does not exist on this system.''')
+    else:  #nodirectory provided, use cd
+        directory = get_current_directory()
+        print(f"* No user directory provided. Creating new s2stlite project in current directory ({directory}). \n")
+    #2. check if pages folder exists, if not, create it
+    create_directory(os.path.join(directory,'pages'))
+    #3. create settings fileif it doesn't exist.
+    if not file_exists(os.path.join(directory,'settings.yaml')):
+        if not copy_file_from_subfolder(subfolder='templates',filename='settings.yaml',destination_dir=directory):
+            raise ValueError(f'''* Issue copying settings template.''')
+    else: print(f"* settings.yaml already exists in {directory}. NO NEW FILE CREATED. \n")
+    print(f"* Folder structure successfully created: {directory}. \n")
 
 
+def s2s_convert(
+    stlite_version: Optional[str] = None,
+    pyodide_version: Optional[str] = None,
+    directory: Optional[str] = None,
+    packages: Optional[Dict[str, str]] = None
+) -> None:
+    """
+    Converts a Streamlit application project into a single HTML file using stlite.
 
-def s2s_convert(stlite_version = None, pyodide_version = None, directory = None, packages = None):
+    This function performs the following steps:
+    1. Determines the target directory (current working directory if not specified).
+    2. Loads stlite, JavaScript, and Pyodide versions (uses latest if not specified).
+    3. Reads 'settings.yaml' from the target directory.
+    4. Updates settings with the chosen stlite, JS, and Pyodide versions.
+    5. Ensures the main app entrypoint is not duplicated in the app files list.
+    6. Validates that all files listed in settings exist.
+    7. Generates the HTML content using `create_html`.
+    8. Writes the generated HTML to a file named after the app_name in `settings.yaml`.
+
+    Parameters
+    ----------
+    stlite_version : Optional[str], optional
+        The specific version of stlite to use (e.g., "0.46.0"). If None (default),
+        the latest available version is used. This also determines the default
+        JavaScript version.
+    pyodide_version : Optional[str], optional
+        The specific version of Pyodide to use. If None (default), the latest
+        available version compatible with the chosen stlite_version is used.
+    directory : Optional[str], optional
+        The root directory of the Streamlit application project. If None (default),
+        the current working directory is used. This directory must contain
+        'settings.yaml' and all application files.
+    packages : Optional[Dict[str, str]], optional
+        A dictionary mapping package names to specific versions, which can be used
+        to override versions specified in requirements. If None (default),
+        versions from requirements or latest available are used.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        - If the specified `directory` does not exist.
+        - If `stlite_version` is provided but not supported.
+        - If 'settings.yaml' is not found in the directory.
+        - If any file listed in 'settings.yaml' under 'APP_FILES' is not found.
+    """
     #0. read/set directory
     if directory is not None: #directory is provided
         #check provided directory is valid
