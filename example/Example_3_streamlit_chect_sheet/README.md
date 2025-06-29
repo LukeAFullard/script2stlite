@@ -13,7 +13,9 @@ With `stlite`, your Streamlit app becomes a portable HTML file that can be easil
 The original "Streamlit Cheat Sheet" application was created by **Daniel Lewis**. We extend our gratitude to him for developing this excellent resource for the Streamlit community.
 
 You can find the original Streamlit application and its source code here:
-[https://github.com/daniellewisDL/streamlit-cheat-sheet](https://github.com/daniellewisDL/streamlit-cheat-sheet)
+[https://github.com/daniellewisDL/streamlit-cheat-sheet](https://github.com/daniellewisDL/streamlit-cheat-sheet)  
+
+You can find a version of the app **running on streamlit servers** here: [https://cheat-sheet.streamlit.app/](https://cheat-sheet.streamlit.app/).
 
 ## Hosted `stlite` Version
 
