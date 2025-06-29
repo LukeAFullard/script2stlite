@@ -1,0 +1,6 @@
+APP_NAME: "Streamlit cheat sheet"  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
+  - streamlit
+APP_ENTRYPOINT: app.py #entrypoint to app - change this to your main python file
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - logomark_website.png

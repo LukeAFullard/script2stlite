@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Streamlit cheat sheet</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.83.1/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.83.1/build/stlite.js"
+mount(
+  {
+    requirements: ['streamlit'],
+    entrypoint: "app.py",
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js",
+    files: {
+"app.py": `
+"""
+Streamlit Cheat Sheet
+
+App to summarise streamlit docs v1.25.0
+
+There is also an accompanying png and pdf version
+
+https://github.com/daniellewisDL/streamlit-cheat-sheet
+
+v1.25.0
+20 August 2023
+
+Author:
+    @daniellewisDL : https://github.com/daniellewisDL
+
+Contributors:
+    @arnaudmiribel : https://github.com/arnaudmiribel
+    @akrolsmir : https://github.com/akrolsmir
+    @nathancarter : https://github.com/nathancarter
+
+"""
+
+import streamlit as st
+from pathlib import Path
+import base64
+
+# Initial page config
+
+st.set_page_config(
+     page_title='Streamlit cheat sheet',
+     layout="wide",
+     initial_sidebar_state="expanded",
+)
+
+def main():
+    cs_sidebar()
+    cs_body()
+
+    return None
+
+# Thanks to streamlitopedia for the following code snippet
+
+def img_to_bytes(img_path):
+    img_bytes = Path(img_path).read_bytes()
+    encoded = base64.b64encode(img_bytes).decode()
+    return encoded
+
+# sidebar
+
+def cs_sidebar():
+
+    st.sidebar.markdown('''[<img src='data:image/png;base64,{}' class='img-fluid' width=32 height=32>](https://streamlit.io/)'''.format(img_to_bytes("logomark_website.png")), unsafe_allow_html=True)
+    st.sidebar.header('Streamlit cheat sheet')
+
+    st.sidebar.markdown('''
+<small>Summary of the [docs](https://docs.streamlit.io/), as of [Streamlit v1.25.0](https://www.streamlit.io/).</small>
+    ''', unsafe_allow_html=True)
+
+    st.sidebar.markdown('__Install and import__')
+
+    st.sidebar.code('$ pip install streamlit')
+
+    st.sidebar.code('''
+# Import convention
+>>> import streamlit as st
+''')
+
+    st.sidebar.markdown('__Add widgets to sidebar__')
+    st.sidebar.code('''
+# Just add it after st.sidebar:
+>>> a = st.sidebar.radio(\\'Choose:\\',[1,2])
+    ''')
+
+    st.sidebar.markdown('__Magic commands__')
+    st.sidebar.code('''
+'_This_ is some __Markdown__'
+a=3
+'dataframe:', data
+''')
+
+    st.sidebar.markdown('__Command line__')
+    st.sidebar.code('''
+$ streamlit --help
+$ streamlit run your_script.py
+$ streamlit hello
+$ streamlit config show
+$ streamlit cache clear
+$ streamlit docs
+$ streamlit --version
+    ''')
+
+    st.sidebar.markdown('__Pre-release features__')
+    st.sidebar.code('''
+pip uninstall streamlit
+pip install streamlit-nightly --upgrade
+    ''')
+    st.sidebar.markdown('<small>Learn more about [experimental features](https://docs.streamlit.io/library/advanced-features/prerelease#beta-and-experimental-features)</small>', unsafe_allow_html=True)
+
+    st.sidebar.markdown('''<hr>''', unsafe_allow_html=True)
+    st.sidebar.markdown('''<small>[Cheat sheet v1.25.0](https://github.com/daniellewisDL/streamlit-cheat-sheet)  | Aug 2023 | [Daniel Lewis](https://daniellewisdl.github.io/)</small>''', unsafe_allow_html=True)
+
+    return None
+
+##########################
+# Main body of cheat sheet
+##########################
+
+def cs_body():
+
+    col1, col2, col3 = st.columns(3)
+
+    #######################################
+    # COLUMN 1
+    #######################################
+    
+    # Display text
+
+    col1.subheader('Display text')
+    col1.code('''
+st.text('Fixed width text')
+st.markdown('_Markdown_') # see #*
+st.caption('Balloons. Hundreds of them...')
+st.latex(r\\'\\'\\' e^{i\\pi} + 1 = 0 \\'\\'\\')
+st.write('Most objects') # df, err, func, keras!
+st.write(['st', 'is <', 3]) # see *
+st.title('My title')
+st.header('My header')
+st.subheader('My sub')
+st.code('for i in range(8): foo()')
+
+# * optional kwarg unsafe_allow_html = True
+
+    ''')
+
+    # Display data
+
+    col1.subheader('Display data')
+    col1.code('''
+st.dataframe(my_dataframe)
+st.table(data.iloc[0:10])
+st.json({'foo':'bar','fu':'ba'})
+st.metric(label="Temp", value="273 K", delta="1.2 K")
+    ''')
+
+
+    # Display media
+
+    col1.subheader('Display media')
+    col1.code('''
+st.image('./header.png')
+st.audio(data)
+st.video(data)
+    ''')
+
+    # Columns
+
+    col1.subheader('Columns')
+    col1.code('''
+col1, col2 = st.columns(2)
+col1.write('Column 1')
+col2.write('Column 2')
+
+# Three columns with different widths
+col1, col2, col3 = st.columns([3,1,1])
+# col1 is wider
+              
+# Using 'with' notation:
+>>> with col1:
+>>>     st.write('This is column 1')
+              
+''')
+
+    # Tabs
+    
+    col1.subheader('Tabs')
+    col1.code('''
+# Insert containers separated into tabs:
+>>> tab1, tab2 = st.tabs(["Tab 1", "Tab2"])
+>>> tab1.write("this is tab 1")
+>>> tab2.write("this is tab 2")
+
+# You can also use "with" notation:
+>>> with tab1:
+>>>   st.radio('Select one:', [1, 2])
+''')
+
+    # Control flow
+
+    col1.subheader('Control flow')
+    col1.code('''
+# Stop execution immediately:
+st.stop()
+# Rerun script immediately:
+st.experimental_rerun()
+
+# Group multiple widgets:
+>>> with st.form(key='my_form'):
+>>>   username = st.text_input('Username')
+>>>   password = st.text_input('Password')
+>>>   st.form_submit_button('Login')
+''')
+    
+    # Personalize apps for users
+
+    col1.subheader('Personalize apps for users')
+    col1.code('''
+# Show different content based on the user's email address.
+>>> if st.user.email == 'jane@email.com':
+>>>    display_jane_content()
+>>> elif st.user.email == 'adam@foocorp.io':
+>>>    display_adam_content()
+>>> else:
+>>>    st.write("Please contact us to get access!")
+''')
+
+
+    #######################################
+    # COLUMN 2
+    #######################################
+
+    # Display interactive widgets
+
+    col2.subheader('Display interactive widgets')
+    col2.code('''
+st.button('Hit me')
+st.data_editor('Edit data', data)
+st.checkbox('Check me out')
+st.radio('Pick one:', ['nose','ear'])
+st.selectbox('Select', [1,2,3])
+st.multiselect('Multiselect', [1,2,3])
+st.slider('Slide me', min_value=0, max_value=10)
+st.select_slider('Slide to select', options=[1,'2'])
+st.text_input('Enter some text')
+st.number_input('Enter a number')
+st.text_area('Area for textual entry')
+st.date_input('Date input')
+st.time_input('Time entry')
+st.file_uploader('File uploader')
+st.download_button('On the dl', data)
+st.camera_input("一二三,茄子!")
+st.color_picker('Pick a color')
+    ''')
+
+    col2.code('''
+# Use widgets\\' returned values in variables
+>>> for i in range(int(st.number_input('Num:'))): foo()
+>>> if st.sidebar.selectbox('I:',['f']) == 'f': b()
+>>> my_slider_val = st.slider('Quinn Mallory', 1, 88)
+>>> st.write(slider_val)
+    ''')
+    col2.code('''
+# Disable widgets to remove interactivity:
+>>> st.slider('Pick a number', 0, 100, disabled=True)
+              ''')
+
+    # Build chat-based apps
+
+    col2.subheader('Build chat-based apps')
+    col2.code('''
+# Insert a chat message container.
+>>> with st.chat_message("user"):
+>>>    st.write("Hello 👋")
+>>>    st.line_chart(np.random.randn(30, 3))
+
+# Display a chat input widget.
+>>> st.chat_input("Say something")          
+''')
+
+    col2.markdown('<small>Learn how to [build chat-based apps](https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps)</small>', unsafe_allow_html=True)
+
+    # Mutate data
+
+    col2.subheader('Mutate data')
+    col2.code('''
+# Add rows to a dataframe after
+# showing it.
+>>> element = st.dataframe(df1)
+>>> element.add_rows(df2)
+
+# Add rows to a chart after
+# showing it.
+>>> element = st.line_chart(df1)
+>>> element.add_rows(df2)
+''')
+
+    # Display code
+
+    col2.subheader('Display code')
+    col2.code('''
+st.echo()
+>>> with st.echo():
+>>>     st.write('Code will be executed and printed')
+    ''')
+
+    # Placeholders, help, and options
+
+    col2.subheader('Placeholders, help, and options')
+    col2.code('''
+# Replace any single element.
+>>> element = st.empty()
+>>> element.line_chart(...)
+>>> element.text_input(...)  # Replaces previous.
+
+# Insert out of order.
+>>> elements = st.container()
+>>> elements.line_chart(...)
+>>> st.write("Hello")
+>>> elements.text_input(...)  # Appears above "Hello".
+
+st.help(pandas.DataFrame)
+st.get_option(key)
+st.set_option(key, value)
+st.set_page_config(layout='wide')
+st.experimental_show(objects)
+st.experimental_get_query_params()
+st.experimental_set_query_params(**params)
+    ''')
+
+    #######################################
+    # COLUMN 3
+    #######################################
+
+
+    # Connect to data sources
+    
+    col3.subheader('Connect to data sources')
+
+    col3.code('''
+st.experimental_connection('pets_db', type='sql')
+conn = st.experimental_connection('sql')
+conn = st.experimental_connection('snowpark')
+
+>>> class MyConnection(ExperimentalBaseConnection[myconn.MyConnection]):
+>>>    def _connect(self, **kwargs) -> MyConnection:
+>>>        return myconn.connect(**self._secrets, **kwargs)
+>>>    def query(self, query):
+>>>       return self._instance.query(query)
+              ''')
+
+
+    # Optimize performance
+
+    col3.subheader('Optimize performance')
+    col3.write('Cache data objects')
+    col3.code('''
+# E.g. Dataframe computation, storing downloaded data, etc.
+>>> @st.cache_data
+... def foo(bar):
+...   # Do something expensive and return data
+...   return data
+# Executes foo
+>>> d1 = foo(ref1)
+# Does not execute foo
+# Returns cached item by value, d1 == d2
+>>> d2 = foo(ref1)
+# Different arg, so function foo executes
+>>> d3 = foo(ref2)
+# Clear all cached entries for this function
+>>> foo.clear()
+# Clear values from *all* in-memory or on-disk cached functions
+>>> st.cache_data.clear()
+    ''')
+    col3.write('Cache global resources')
+    col3.code('''
+# E.g. TensorFlow session, database connection, etc.
+>>> @st.cache_resource
+... def foo(bar):
+...   # Create and return a non-data object
+...   return session
+# Executes foo
+>>> s1 = foo(ref1)
+# Does not execute foo
+# Returns cached item by reference, s1 == s2
+>>> s2 = foo(ref1)
+# Different arg, so function foo executes
+>>> s3 = foo(ref2)
+# Clear all cached entries for this function
+>>> foo.clear()
+# Clear all global resources from cache
+>>> st.cache_resource.clear()
+    ''')
+    col3.write('Deprecated caching')
+    col3.code('''
+>>> @st.cache
+... def foo(bar):
+...   # Do something expensive in here...
+...   return data
+>>> # Executes foo
+>>> d1 = foo(ref1)
+>>> # Does not execute foo
+>>> # Returns cached item by reference, d1 == d2
+>>> d2 = foo(ref1)
+>>> # Different arg, so function foo executes
+>>> d3 = foo(ref2)
+    ''')
+
+
+    # Display progress and status
+
+    col3.subheader('Display progress and status')
+    col3.code('''
+# Show a spinner during a process
+>>> with st.spinner(text='In progress'):
+>>>   time.sleep(3)
+>>>   st.success('Done')
+
+# Show and update progress bar
+>>> bar = st.progress(50)
+>>> time.sleep(3)
+>>> bar.progress(100)
+
+st.balloons()
+st.snow()
+st.toast('Mr Stay-Puft')
+st.error('Error message')
+st.warning('Warning message')
+st.info('Info message')
+st.success('Success message')
+st.exception(e)
+    ''')
+
+
+    return None
+
+# Run main()
+
+if __name__ == '__main__':
+    main()
+
+`,
+"logomark_website.png": Ou("iVBORw0KGgoAAAANSUhEUgAAAnQAAAJ0CAYAAACbab7PAAAEtWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgdGlmZjpJbWFnZUxlbmd0aD0iNjI4IgogICB0aWZmOkltYWdlV2lkdGg9IjYyOCIKICAgdGlmZjpSZXNvbHV0aW9uVW5pdD0iMiIKICAgdGlmZjpYUmVzb2x1dGlvbj0iMTQ0LjAiCiAgIHRpZmY6WVJlc29sdXRpb249IjE0NC4wIgogICBleGlmOlBpeGVsWERpbWVuc2lvbj0iNjI4IgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iNjI4IgogICBleGlmOkNvbG9yU3BhY2U9IjEiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIKICAgeG1wOk1vZGlmeURhdGU9IjIw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"),
+},
+  },
+  document.getElementById("root")
+)
+
+function Ou(n){const i=window.atob(n),a=i.length,l=new Uint8Array(a);for(let u=0;u<a;u++)l[u]=i.charCodeAt(u);return l}
+    </script>
+  </body>
+  <!-- We love stlite! https://github.com/whitphx/stlite and Pyodide https://github.com/pyodide/pyodide -->
+</html>
