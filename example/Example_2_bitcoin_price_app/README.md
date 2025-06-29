@@ -54,20 +54,23 @@ converter = Script2StliteConverter("example/Example_2_bitcoin_price_app")
 The `settings.yaml` file for this example is:
 
 ```yaml
-APP_NAME: "Current BTC vs USD Price Tracker"
-APP_REQUIREMENTS:
+APP_NAME: "Current BTC vs USD Price Tracker"  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
   - streamlit
-  - requests # Crucial for making API calls
-APP_ENTRYPOINT: app.py
-APP_FILES: []
+  - requests
+  - plotly
+  - pandas
+APP_ENTRYPOINT: app.py #entrypoint to app - change this to your main python file
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - assets/image.png #you can include non python files - they will be embedded in the html in binary format
 ```
 
 Key aspects:
 
 -   **`APP_NAME`**: Defines the application's title and the output HTML filename.
--   **`APP_REQUIREMENTS`**: Lists `streamlit` and `requests`. The `requests` library must be compatible with the Pyodide environment.
+-   **`APP_REQUIREMENTS`**: Lists `streamlit`, `requests`, `plotly`, and `pandas`. These libraries must be compatible with the Pyodide environment. `requests` is crucial for making API calls, and `plotly`/`pandas` are often used for data manipulation and visualization.
 -   **`APP_ENTRYPOINT`**: The main `app.py` script.
--   **`APP_FILES`**: Empty, as this is a single-file application with no additional assets or modules.
+-   **`APP_FILES`**: Includes `assets/image.png`, demonstrating that non-Python files like images can be bundled with the application.
 
 ### 4. Convert the Application to HTML
 
