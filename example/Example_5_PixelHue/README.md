@@ -28,4 +28,4 @@ The application allows users to:
 2.  Specify the number of dominant colors to extract.
 3.  View the uploaded image alongside the generated color palette (with HEX codes).
 
-`script2stlite` packages the necessary dependencies (Streamlit, Pillow, scikit-learn, NumPy) to run them efficiently in the browser via Pyodide. The source Python script for this application is [main.py](./main.py) (which uses [palette_extractor.py](./palette_extractor.py)).
+`script2stlite` turns the streamlit app to an stlite app to allow the app to run in the browser via Pyodide. The source Python script for this application is [main.py](./main.py) (which uses [palette_extractor.py](./palette_extractor.py)).
