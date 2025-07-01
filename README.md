@@ -23,7 +23,8 @@ You can install `script2stlite` using pip:
 ```bash
 pip install script2stlite
 ```
-
+## Example web apps from the /example folder
+* [Simple first example](https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html)
 ## Quick Start with `Example_0_simple_app`
 
 This quick start guide uses the example application located in the `example/Example_0_simple_app` directory of this repository.
