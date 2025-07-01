@@ -25,6 +25,13 @@ pip install script2stlite
 ```
 ## Example web apps from the /example folder
 * [Simple first example](https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html)
+* [Multi-page app - simple image editor](https://lukeafullard.github.io/script2stlite/example/Example_1_multi_page_image_editor/Image_Editor.html)
+* [Example using requests - Recent dalt Bitcoin price](https://lukeafullard.github.io/script2stlite/example/Example_2_bitcoin_price_app/Current_BTC_vs_USD_Price_Tracker.html)
+* [Simple conversion from existing web app - Streamlit cheat sheet by Daniel Lewis](https://github.com/LukeAFullard/script2stlite/tree/main/example/Example_3_streamlit_chect_sheet)
+* [More complex app conversion - Streamlit ECharts demo by Fanilo Andrianasolo](https://lukeafullard.github.io/script2stlite/example/Example_4_echarts_demo/Streamlit_echarts_demo.html)
+* [Example with Machine Learning - PixelHue by Juncel Datinggaling](https://lukeafullard.github.io/script2stlite/example/Example_5_PixelHue/PixelHue.html)
+* [How to add a config.toml file to control app appearance - Vizzu example by Germán Andrés and Castaño Vásquez](https://lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html)
+
 ## Quick Start with `Example_0_simple_app`
 
 This quick start guide uses the example application located in the `example/Example_0_simple_app` directory of this repository.
