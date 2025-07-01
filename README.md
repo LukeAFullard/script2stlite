@@ -218,7 +218,7 @@ However, for most use cases, defining your requirements directly in the `APP_REQ
 
 ### Using a Streamlit Configuration File (`config.toml`)
 
-You can customize various aspects of your Streamlit application's appearance and behavior by providing a `config.toml` file. This is particularly useful for setting theme options, configuring server behaviors (though some server options might have limited applicability in the `stlite` context), or defining custom component settings.
+You can customize various aspects of your Streamlit application's appearance and behavior by providing a `config.toml` file. This is particularly useful for setting theme options, configuring server behaviors, or defining custom component settings.
 
 To use a configuration file:
 1.  Create a `config.toml` file in your project, often placed in a `.streamlit` subdirectory (e.g., `.streamlit/config.toml`).
