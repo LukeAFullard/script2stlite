@@ -3,7 +3,7 @@ APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Require
   - streamlit
   - Pillow
 APP_ENTRYPOINT: app.py #entrypoint to app - change this to your main python file
-CONFIG: ""
+CONFIG: false
 APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
   - pages/01_Home.py #additional files for the conversion to find and include. Here are some examples.
   - pages/02_Upload_Image.py #you can include subpages...

@@ -5,7 +5,7 @@ APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Require
   - numpy
   - pillow
 APP_ENTRYPOINT: main.py #entrypoint to app - change this to your main python file
-CONFIG: ""
+CONFIG: false
 APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
   - koala.png
   - palette_extractor.py

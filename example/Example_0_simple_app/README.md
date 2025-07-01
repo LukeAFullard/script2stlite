@@ -56,7 +56,7 @@ APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Require
   - pandas
   - numpy
 APP_ENTRYPOINT: home.py #entrypoint to app - main python file
-CONFIG: ""
+CONFIG: false
 APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
   - functions.py #additional files for the conversion to find and include.
   - assets/image.jpg

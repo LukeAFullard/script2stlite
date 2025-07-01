@@ -53,7 +53,7 @@ APP_REQUIREMENTS:
   - streamlit
   - Pillow # For image manipulation
 APP_ENTRYPOINT: app.py # Main app file that sets page config
-CONFIG: ""
+CONFIG: false
 APP_FILES:
   - pages/01_Home.py
   - pages/02_Upload_Image.py

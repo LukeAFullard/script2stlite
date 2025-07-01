@@ -656,7 +656,7 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
     #check if it exists
     if not file_exists(os.path.join(directory,app_settings.get('CONFIG'))): 
         print(f"** No config file found - setting config blank")
-        config = ""
+        config = "{}"
     else:
         #ensure is a toml file
         if not Path(os.path.join(directory,app_settings.get('CONFIG'))).suffix == '.toml': raise ValueError(f"APP CONFIG must be a .toml file: {os.path.join(directory,app_settings.get('CONFIG'))}")
