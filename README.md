@@ -66,7 +66,7 @@ APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes t
 *   `APP_NAME`: "my simple app" - This will be used for the HTML file name and page title.
 *   `APP_REQUIREMENTS`: Lists `streamlit`, `pandas`, and `numpy`.
 *   `APP_ENTRYPOINT`: `home.py` - This is the main script for the Streamlit app.
-*   `CONFIG: false` - This is the streamlit configuration file which must be a toml file. See Example 6 in theexample folder. If no config file then leave as false
+*   `CONFIG`: `false` (or a path like `.streamlit/config.toml`) - Specifies an optional Streamlit configuration file. If a path is provided, it must point to a TOML file. Set to `false` if no configuration file is used. An example using a TOML config can be found in `example/Example_6_vizzu`.
 *   `APP_FILES`: Includes `functions.py` (a supporting Python module) and `assets/image.jpg` (an image asset).
 
 ### 3. Review the Streamlit Application Code
@@ -215,6 +215,36 @@ converter.convert(
 In this example, if `APP_REQUIREMENTS` in `settings.yaml` just listed `pandas` and `numpy`, the `packages` argument would provide more specific version constraints for `micropip`.
 
 However, for most use cases, defining your requirements directly in the `APP_REQUIREMENTS` list in `settings.yaml` with appropriate version specifiers (e.g., `pandas==1.5.3`, `matplotlib>=3.5`) is the recommended approach. The `packages` parameter offers an override mechanism primarily for scenarios where the user would like to keepa series of stlite apps on the same package versions. In theory this should reduce loading time for users since a single version of a package is downloaded, rather than multiple versions.
+
+### Using a Streamlit Configuration File (`config.toml`)
+
+You can customize various aspects of your Streamlit application's appearance and behavior by providing a `config.toml` file. This is particularly useful for setting theme options, configuring server behaviors (though some server options might have limited applicability in the `stlite` context), or defining custom component settings.
+
+To use a configuration file:
+1.  Create a `config.toml` file in your project, often placed in a `.streamlit` subdirectory (e.g., `.streamlit/config.toml`).
+2.  Specify the path to this file in your `settings.yaml` under the `CONFIG` key. For example:
+    ```yaml
+    CONFIG: .streamlit/config.toml
+    ```
+    If you don't need a configuration file, set `CONFIG: false`.
+
+`script2stlite` will embed the content of this `config.toml` file into the generated HTML, making it available to your `stlite` application.
+
+**Example `config.toml`:**
+```toml
+[theme]
+primaryColor="#F63366"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#F0F2F6"
+textColor="#262730"
+font="sans serif"
+```
+
+**Key Points:**
+*   `script2stlite` simply includes the `config.toml` content. The interpretation and application of these settings are handled by Streamlit running within `stlite`.
+*   Not all options available in a standard Streamlit deployment might be relevant or function identically in the `stlite` environment due to its browser-based nature.
+*   For a comprehensive list of all available configuration options, please refer to the [official Streamlit documentation on configuration](https://docs.streamlit.io/library/advanced-features/configuration).
+*   The example application in `example/Example_6_vizzu` demonstrates the use of a `config.toml` file to set a custom theme for the Vizzu charts.
 
 ## Contributing
 
