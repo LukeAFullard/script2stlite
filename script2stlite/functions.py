@@ -654,7 +654,7 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
     
     #9) replace |CONFIG|
     #check if it exists
-    if not file_exists(os.path.join(directory,app_settings.get('CONFIG'))): 
+    if not file_exists(os.path.join(directory,str(app_settings.get('CONFIG')))): 
         print(f"** No config file found - setting config blank")
         config = "{}"
     else:
