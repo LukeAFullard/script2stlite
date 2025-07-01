@@ -1,5 +1,6 @@
 import requests
 import yaml
+import tomli
 import os
 import shutil
 from typing import Any, Dict, Tuple, Union
@@ -116,6 +117,70 @@ def load_yaml_from_file(path: Union[str, os.PathLike]) -> Dict[str, Any]:
         raise ValueError("YAML content is not a dictionary (mapping type)")
 
     return data
+
+def load_toml_from_file(path: Union[str, os.PathLike]) -> Dict[str, Any]:
+    """
+    Load a TOML file from the local file system and return its contents as a Python dictionary.
+
+    Parameters
+    ----------
+    path : Union[str, os.PathLike]
+        The path to the local TOML file.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The parsed contents of the TOML file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist.
+    RuntimeError
+        If the TOML content cannot be parsed.
+    ValueError
+        If the content is not a dictionary (mapping type).
+    """
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"TOML file not found: {path}")
+
+    try:
+        with open(path, "rb") as f:
+            data: Any = tomli.load(f)
+    except tomli.TOMLDecodeError as e:
+        raise RuntimeError(f"Failed to parse TOML content from {path}: {e}") from e
+
+    if not isinstance(data, dict):
+        raise ValueError("TOML content is not a dictionary (mapping type)")
+
+    return data
+
+def flatten_dict(d: Dict[str, Any], parent_key: str = "", sep: str = ".") -> Dict[str, Any]:
+    """
+    Flatten a nested dictionary by joining keys with a separator.
+
+    Parameters
+    ----------
+    d : Dict[str, Any]
+        The nested dictionary to flatten.
+    parent_key : str, optional
+        The base key to prepend to each flattened key (used for recursion).
+    sep : str, optional
+        The separator to use when joining keys (default is ".").
+
+    Returns
+    -------
+    Dict[str, Any]
+        A flattened dictionary with dot-separated keys.
+    """
+    items: Dict[str, Any] = {}
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.update(flatten_dict(v, new_key, sep=sep))
+        else:
+            items[new_key] = v
+    return items
 
 def load_text_from_file(
     path: Union[str, os.PathLike],
@@ -587,7 +652,21 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
     if not Path(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))).suffix == '.py': raise ValueError(f"APP ENTRYPOINT must be a .py file: {os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))}")
     html = replace_text(html, '|APP_HOME|', load_text_from_file(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))), add_stlite_punctuation = False)   
     
-    #9) replace '|APP_FILES|' 
+    #9) replace |CONFIG|
+    #check if it exists
+    if not file_exists(os.path.join(directory,app_settings.get('CONFIG'))): 
+        print(f"** No config file found - setting config blank")
+        config = ""
+    else:
+        #ensure is a toml file
+        if not Path(os.path.join(directory,app_settings.get('CONFIG'))).suffix == '.toml': raise ValueError(f"APP CONFIG must be a .toml file: {os.path.join(directory,app_settings.get('CONFIG'))}")
+        else:
+            config = flatten_dict(load_toml_from_file(os.path.join(directory,app_settings.get('CONFIG'))))
+    config = str(config).replace('False','false').replace('True','true')        
+    html = replace_text(html, '|CONFIG|', config, add_stlite_punctuation = False)           
+    
+    
+    #10) replace '|APP_FILES|' 
     app_files = ''
     if app_settings.get('APP_FILES') is not None:
         for file_j in app_settings.get('APP_FILES'):

@@ -1,0 +1,15 @@
+APP_NAME: "Vizzu example"  #give your app a nice name
+APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
+  - streamlit
+  - ipyvizzu
+  - pandas
+  - ipyvizzu-story
+APP_ENTRYPOINT: streamlitvizzu.py #entrypoint to app - change this to your main python file
+CONFIG: .streamlit/config.toml
+APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
+  - streamlitvizzuParalympics.py
+  - Paris2024_Paralympics_Emblem.jpg
+  - paralympic_2024_medallists.csv
+  - medallists_with_age.csv
+  - medallists.csv
+  - Logo_Paris2024_OlyEmbleme.png
