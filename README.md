@@ -56,6 +56,7 @@ APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Require
   - pandas
   - numpy
 APP_ENTRYPOINT: home.py #entrypoint to app - main python file
+CONFIG: ""
 APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes that will be converted to binary and embeded in the html.
   - functions.py #additional files for the conversion to find and include.
   - assets/image.jpg
@@ -65,6 +66,7 @@ APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes t
 *   `APP_NAME`: "my simple app" - This will be used for the HTML file name and page title.
 *   `APP_REQUIREMENTS`: Lists `streamlit`, `pandas`, and `numpy`.
 *   `APP_ENTRYPOINT`: `home.py` - This is the main script for the Streamlit app.
+*   `CONFIG: ""` - This is the streamlit configuration file which must be a toml file. See Example 6 in theexample folder.
 *   `APP_FILES`: Includes `functions.py` (a supporting Python module) and `assets/image.jpg` (an image asset).
 
 ### 3. Review the Streamlit Application Code
