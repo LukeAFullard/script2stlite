@@ -1,3 +1,4 @@
+0.28.0: 'pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.0/full/pyodide.js",'
 0.27.7: 'pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js",'
 0.27.6: 'pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.27.6/full/pyodide.js",'
 0.27.5: 'pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js",'
