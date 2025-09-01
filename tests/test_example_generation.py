@@ -7,6 +7,7 @@ from script2stlite.script2stlite import Script2StliteConverter
 @pytest.mark.parametrize("example_name", [
     "Example_2_bitcoin_price_app",
     "Example_4_echarts_demo",
+    "Example_5_PixelHue",
 ])
 def test_example_generation(tmp_path, example_name):
     # 1. Define paths
