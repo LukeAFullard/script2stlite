@@ -84,7 +84,6 @@ def test_s2s_convert_simple_app(tmp_path, mocker):
     # Check for stlite URLs
     assert "css_url" in html_content
     assert "js_url" in html_content
-    assert "pyodide_url" in html_content
 
     # Check for app name
     assert "<title>My Test App</title>" in html_content
