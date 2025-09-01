@@ -4,12 +4,16 @@ import shutil
 import yaml
 from script2stlite.script2stlite import Script2StliteConverter
 
-def test_bitcoin_app_generation(tmp_path):
+@pytest.mark.parametrize("example_name", [
+    "Example_2_bitcoin_price_app",
+    "Example_4_echarts_demo",
+])
+def test_example_generation(tmp_path, example_name):
     # 1. Define paths
-    example_dir_src = Path("example/Example_2_bitcoin_price_app")
-    project_dir_tmp = tmp_path / "bitcoin_app"
+    example_dir_src = Path("example") / example_name
+    project_dir_tmp = tmp_path / example_name
     output_dir = Path("tests")
-    output_filename = "generated_bitcoin_app.html"
+    output_filename = f"generated_{example_name}.html"
     output_html_path = output_dir / output_filename
 
     # 2. Copy example project to a temporary directory
