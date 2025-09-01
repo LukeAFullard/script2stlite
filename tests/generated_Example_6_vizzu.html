@@ -30,7 +30,7 @@ import pandas as pd
 from ipyvizzu import Config, Data, Style # https://ipyvizzu.vizzuhq.com/latest/
 from ipyvizzustory import Story, Slide, Step # https://vizzu-story.vizzuhq.com/latest/
 import math
- 
+
 # Definimos los parámetros de configuración de la aplicación
 st.set_page_config(
     page_title="Paris 2024 Olympics - Animated data summary", #Título de la página
@@ -53,12 +53,12 @@ estilos = """
 st.html(estilos)
 
 # Se pueden cargar los datos al Vizzu Streamlit Builder
-# se procede con la creación de los gráficos y se adicionan como historia, las cuales se pueden  
+# se procede con la creación de los gráficos y se adicionan como historia, las cuales se pueden
 # adicionar a un programa de Streamlit
 # https://vizzu-builder.streamlit.app/
 
 # Cargamos los tipos
-d_types = {    
+d_types = {
     "medal_type": str,
     "medal_code": float,
     "name": str,
@@ -144,7 +144,7 @@ story.add_slide(
                     }
                 }
             ),
-            
+
         )
     )
 )
@@ -216,13 +216,13 @@ story.add_slide(
                     "split": False,
                     "align": "none",
                     "orientation": "horizontal",
-                    "label": "count()",                    
+                    "label": "count()",
                     "title": "Medals per type",
                     "subtitle":"A big total of 2,271 medals were distributed",
                 }
             ),
             Style(
-                {                    
+                {
                     "plot": {
                         "yAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
                         "xAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
@@ -230,14 +230,14 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",  
-                                "fontSize": 20                              
+                                "numberScale": "shortScaleSymbolUS",
+                                "fontSize": 20
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
                             "borderOpacity": 1,
                             "colorPalette": "#9a3602 #ffbc01 #b8b8b8",
-                        },                        
+                        },
                     },
                     "Chart": {
                         "title": {}
@@ -376,7 +376,7 @@ story.add_slide(
                                 "maxFractionDigits": "1",
                                 "numberScale": "shortScaleSymbolUS",
                                 "angle":1.5708,
-                                "fontSize": 10                              
+                                "fontSize": 10
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -409,8 +409,8 @@ story.add_slide(
                     "align": "none",
                     "orientation": "horizontal",
                     "label": "count()",
-                    "sort": "byValue",                    
-                    "title": "What country got more gold?",                    
+                    "sort": "byValue",
+                    "title": "What country got more gold?",
                     "subtitle": "United States won more gold, followed by Netherlands, China and France",
                 }
             ),
@@ -568,7 +568,7 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",                                
+                                "numberScale": "shortScaleSymbolUS",
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -639,7 +639,7 @@ agesMax = df[df['age'].astype(int)>0]['age'].max()
 cols = st.columns([2,10,2])
 with cols[0]:
     st.image("https://raw.githubusercontent.com/gcastano/Streamlit-Demo-Apps/main/StreamlitVizzu/Logo_Paris2024_OlyEmbleme.png")
-    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")    
+    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")
 with cols[1]:
     st.subheader("Olympics")
     story.play()
@@ -729,7 +729,7 @@ story.add_slide(
                     }
                 }
             ),
-            
+
         )
     )
 )
@@ -801,13 +801,13 @@ story.add_slide(
                     "split": False,
                     "align": "none",
                     "orientation": "horizontal",
-                    "label": "count()",                    
+                    "label": "count()",
                     "title": "Medals per type",
                     "subtitle":f"A big total of {medals:,.0f} medals were distributed",
                 }
             ),
             Style(
-                {                    
+                {
                     "plot": {
                         "yAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
                         "xAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
@@ -815,14 +815,14 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",  
-                                "fontSize": 20                              
+                                "numberScale": "shortScaleSymbolUS",
+                                "fontSize": 20
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
                             "borderOpacity": 1,
                             "colorPalette": "#ffbc01 #9a3602 #b8b8b8",
-                        },                        
+                        },
                     },
                     "Chart": {
                         "title": {}
@@ -961,7 +961,7 @@ story.add_slide(
                                 "maxFractionDigits": "1",
                                 "numberScale": "shortScaleSymbolUS",
                                 "angle":1.5708,
-                                "fontSize": 10                              
+                                "fontSize": 10
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -994,8 +994,8 @@ story.add_slide(
                     "align": "none",
                     "orientation": "horizontal",
                     "label": "count()",
-                    "sort": "byValue",                    
-                    "title": "What country got more gold?",                    
+                    "sort": "byValue",
+                    "title": "What country got more gold?",
                     "subtitle": "China won more gold, followed by Great Britain and United States",
                 }
             ),
@@ -1153,7 +1153,7 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",                                
+                                "numberScale": "shortScaleSymbolUS",
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -1217,7 +1217,7 @@ story.add_slide(
 cols = st.columns([2,10,2])
 with cols[0]:
     st.image("https://raw.githubusercontent.com/gcastano/Streamlit-Demo-Apps/main/StreamlitVizzu/Paris2024_Paralympics_Emblem.jpg")
-    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")    
+    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")
 with cols[1]:
     st.subheader("Paralympics")
     story.play()
@@ -1237,7 +1237,7 @@ import pandas as pd
 from ipyvizzu import Config, Data, Style # https://ipyvizzu.vizzuhq.com/latest/
 from ipyvizzustory import Story, Slide, Step # https://vizzu-story.vizzuhq.com/latest/
 import math
- 
+
 # Definimos los parámetros de configuración de la aplicación
 st.set_page_config(
     page_title="Paris 2024 Olympics - Animated data summary", #Título de la página
@@ -1260,12 +1260,12 @@ estilos = """
 st.html(estilos)
 
 # Se pueden cargar los datos al Vizzu Streamlit Builder
-# se procede con la creación de los gráficos y se adicionan como historia, las cuales se pueden  
+# se procede con la creación de los gráficos y se adicionan como historia, las cuales se pueden
 # adicionar a un programa de Streamlit
 # https://vizzu-builder.streamlit.app/
 
 # Cargamos los tipos
-d_types = {    
+d_types = {
     "medal_type": str,
     "medal_code": float,
     "name": str,
@@ -1351,7 +1351,7 @@ story.add_slide(
                     }
                 }
             ),
-            
+
         )
     )
 )
@@ -1423,13 +1423,13 @@ story.add_slide(
                     "split": False,
                     "align": "none",
                     "orientation": "horizontal",
-                    "label": "count()",                    
+                    "label": "count()",
                     "title": "Medals per type",
                     "subtitle":"A big total of 2,271 medals were distributed",
                 }
             ),
             Style(
-                {                    
+                {
                     "plot": {
                         "yAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
                         "xAxis": {"label": {"numberScale": "shortScaleSymbolUS"}},
@@ -1437,14 +1437,14 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",  
-                                "fontSize": 20                              
+                                "numberScale": "shortScaleSymbolUS",
+                                "fontSize": 20
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
                             "borderOpacity": 1,
                             "colorPalette": "#9a3602 #ffbc01 #b8b8b8",
-                        },                        
+                        },
                     },
                     "Chart": {
                         "title": {}
@@ -1583,7 +1583,7 @@ story.add_slide(
                                 "maxFractionDigits": "1",
                                 "numberScale": "shortScaleSymbolUS",
                                 "angle":1.5708,
-                                "fontSize": 10                              
+                                "fontSize": 10
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -1616,8 +1616,8 @@ story.add_slide(
                     "align": "none",
                     "orientation": "horizontal",
                     "label": "count()",
-                    "sort": "byValue",                    
-                    "title": "What country got more gold?",                    
+                    "sort": "byValue",
+                    "title": "What country got more gold?",
                     "subtitle": "United States won more gold, followed by Netherlands, China and France",
                 }
             ),
@@ -1775,7 +1775,7 @@ story.add_slide(
                             "label": {
                                 "numberFormat": "prefixed",
                                 "maxFractionDigits": "1",
-                                "numberScale": "shortScaleSymbolUS",                                
+                                "numberScale": "shortScaleSymbolUS",
                             },
                             "rectangleSpacing": None,
                             "circleMinRadius": 0.005,
@@ -1846,7 +1846,7 @@ agesMax = df[df['age'].astype(int)>0]['age'].max()
 cols = st.columns([2,10,2])
 with cols[0]:
     st.image("Paris2024 Emblem Final _0.png")
-    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")    
+    st.info("Created with ❤️ by [Germán Andrés Castaño Vásquez](https://www.linkedin.com/in/germancastano/) using [Streamlit](https://streamlit.io/), [Vizzu](https://www.vizzu.io/) and a dataset from [Kaggle](https://www.kaggle.com/datasets/sajkazmi/paris-olympics-2024-games-dataset-updated-daily)")
 with cols[1]:
     story.play()
     st.info("Click on the play button to see every slide...enjoy 😁")

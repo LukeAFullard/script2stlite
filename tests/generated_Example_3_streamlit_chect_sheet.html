@@ -139,7 +139,7 @@ def cs_body():
     #######################################
     # COLUMN 1
     #######################################
-    
+
     # Display text
 
     col1.subheader('Display text')
@@ -190,15 +190,15 @@ col2.write('Column 2')
 # Three columns with different widths
 col1, col2, col3 = st.columns([3,1,1])
 # col1 is wider
-              
+
 # Using 'with' notation:
 >>> with col1:
 >>>     st.write('This is column 1')
-              
+
 ''')
 
     # Tabs
-    
+
     col1.subheader('Tabs')
     col1.code('''
 # Insert containers separated into tabs:
@@ -226,7 +226,7 @@ st.experimental_rerun()
 >>>   password = st.text_input('Password')
 >>>   st.form_submit_button('Login')
 ''')
-    
+
     # Personalize apps for users
 
     col1.subheader('Personalize apps for users')
@@ -290,7 +290,7 @@ st.color_picker('Pick a color')
 >>>    st.line_chart(np.random.randn(30, 3))
 
 # Display a chat input widget.
->>> st.chat_input("Say something")          
+>>> st.chat_input("Say something")
 ''')
 
     col2.markdown('<small>Learn how to [build chat-based apps](https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps)</small>', unsafe_allow_html=True)
@@ -349,7 +349,7 @@ st.experimental_set_query_params(**params)
 
 
     # Connect to data sources
-    
+
     col3.subheader('Connect to data sources')
 
     col3.code('''
