@@ -3,6 +3,8 @@ from pathlib import Path
 import yaml
 from script2stlite.script2stlite import s2s_convert
 import shutil
+import os
+from script2stlite.functions import load_yaml_from_file
 
 def test_simple_app_rendering_generation(tmp_path):
     # 1. Create a mock project
@@ -39,9 +41,6 @@ st.write('Hello, Streamlit!')
     shutil.copy(html_file, "tests/generated_test_app.html")
 
 
-import os
-from script2stlite.functions import load_yaml_from_file
-
 EXAMPLE_DIRS = [
     "Example_0_simple_app",
     "Example_1_multi_page_image_editor",
@@ -53,17 +52,21 @@ EXAMPLE_DIRS = [
 ]
 
 @pytest.mark.parametrize("example_dir_name", EXAMPLE_DIRS)
-def test_generate_example_apps(example_dir_name):
+def test_generate_example_apps(example_dir_name, tmp_path):
     example_dir = os.path.join("example", example_dir_name)
 
-    # Run the conversion
-    s2s_convert(directory=example_dir)
+    # Copy example dir to a temp dir
+    temp_example_dir = tmp_path / example_dir_name
+    shutil.copytree(example_dir, temp_example_dir)
 
-    # Find the generated HTML file
-    settings = load_yaml_from_file(os.path.join(example_dir, "settings.yaml"))
+    # Run the conversion on the temp dir
+    s2s_convert(directory=str(temp_example_dir))
+
+    # Find the generated HTML file in the temp dir
+    settings = load_yaml_from_file(os.path.join(temp_example_dir, "settings.yaml"))
     app_name = settings.get("APP_NAME")
     html_file_name = f"{app_name.replace(' ', '_')}.html"
-    generated_html_path = os.path.join(example_dir, html_file_name)
+    generated_html_path = os.path.join(temp_example_dir, html_file_name)
 
     assert os.path.exists(generated_html_path)
 
