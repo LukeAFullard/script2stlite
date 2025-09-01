@@ -23,7 +23,10 @@ def test_simple_app_rendering_generation(tmp_path):
 
     # Create app.py
     with open(project_dir / "app.py", "w") as f:
-        f.write("import streamlit as st\\nst.write('Hello, Streamlit!')")
+        f.write("""
+import streamlit as st
+st.write('Hello, Streamlit!')
+""")
 
     # 2. Run the conversion
     s2s_convert(directory=str(project_dir))
