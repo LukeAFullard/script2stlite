@@ -1,5 +1,7 @@
 # script2stlite
 
+**Note:** This project is continuously under development.
+
 A Python package to convert Streamlit applications into single, self-contained HTML files that run entirely in the browser using [stlite](https://github.com/whitphx/stlite).
 
 This allows you to easily share or deploy your Streamlit apps as static web pages without needing a Python backend server.  
