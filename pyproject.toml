@@ -17,3 +17,8 @@ tomli = "^2.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+pytest-playwright = "^0.5.0"
+pytest-mock = "^3.14.0"
