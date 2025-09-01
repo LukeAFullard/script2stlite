@@ -1,7 +1,7 @@
 APP_NAME: "PixelHue"  #give your app a nice name
 APP_REQUIREMENTS: #app requirements separated by a '-' on each new line. Requirements MUST be compatible with pyodide. Suggest specifying versions.
   - streamlit
-  - scikit-learn==1.6.1
+  - scikit-learn==1.7.0
   - numpy
   - pillow
 APP_ENTRYPOINT: main.py #entrypoint to app - change this to your main python file
