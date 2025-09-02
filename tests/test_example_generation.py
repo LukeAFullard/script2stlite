@@ -8,6 +8,7 @@ from script2stlite.script2stlite import Script2StliteConverter
     "Example_2_bitcoin_price_app",
     "Example_4_echarts_demo",
     "Example_5_PixelHue",
+    "Example_3_streamlit_chect_sheet",
 ])
 def test_example_generation(tmp_path, example_name):
     # 1. Define paths
