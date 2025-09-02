@@ -5,6 +5,8 @@ import yaml
 from script2stlite.script2stlite import Script2StliteConverter
 
 @pytest.mark.parametrize("example_name", [
+    "Example_0_simple_app",
+    "Example_1_multi_page_image_editor",
     "Example_2_bitcoin_price_app",
     "Example_4_echarts_demo",
     "Example_5_PixelHue",
