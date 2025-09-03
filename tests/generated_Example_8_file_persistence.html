@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>My Test App</title>
+    <title>File Persistence Demo</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.css"
@@ -22,14 +22,40 @@ mount(
 
     streamlitConfig : {},
     requirements: ['streamlit'],
-    entrypoint: "app.py",
-
+    entrypoint: "home.py",
+    idbfsMountpoints: ["/mnt"],
     pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js",
     files: {
-"app.py": `
-
+"home.py": `
 import streamlit as st
-st.write('Hello, Streamlit!')
+import datetime
+import os
+
+st.title("File Persistence Demo")
+st.write(
+    "This app demonstrates file persistence using the IDBFS (IndexedDB File System). "
+    "Each time you reload this page, a new timestamp is appended to a log file "
+    "stored in the browser's IndexedDB."
+)
+
+log_file = "/mnt/log.txt"
+
+# Ensure the mount point directory exists within the virtual file system
+if not os.path.exists("/mnt"):
+    os.makedirs("/mnt")
+
+# Append the current timestamp to the log file
+with open(log_file, "a") as f:
+    f.write(f"App opened at: {datetime.datetime.now()}\\\\n")
+
+# Read and display the entire log file
+st.subheader("Log File Content")
+try:
+    with open(log_file, "r") as f:
+        log_content = f.read()
+        st.code(log_content, language="text")
+except FileNotFoundError:
+    st.code("Log file not found. It will be created on the next run.", language="text")
 
 `,
 

@@ -23,6 +23,7 @@ mount(
     streamlitConfig : |CONFIG|,
     requirements: |APP_REQUIREMENTS|,
     entrypoint: "|APP_ENTRYPOINT|",
+    |IDBFS_MOUNTPOINTS|
     |PYODIDE_VERSION|
     files: {
 "|APP_ENTRYPOINT|": `
