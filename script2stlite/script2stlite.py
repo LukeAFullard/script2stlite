@@ -130,11 +130,13 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     settings.update({"|STLITE_JS|":js})
     settings.update({"|PYODIDE_VERSION|":pyodide})
     
-    #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template. 
-    if settings.get('APP_ENTRYPOINT') in settings.get('APP_FILES'): settings.get('APP_FILES').remove(settings.get('APP_ENTRYPOINT'))
+    #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template.
+    app_files = settings.get('APP_FILES', [])
+    if settings.get('APP_ENTRYPOINT') in app_files:
+        app_files.remove(settings.get('APP_ENTRYPOINT'))
     
     # 3. Check that all files exist.
-    for file_j in settings.get('APP_FILES'):
+    for file_j in app_files:
         if not file_exists(os.path.join(directory,file_j)): raise ValueError(f"* File {file_j} not found in {directory}.")
         
     # 4. generate html

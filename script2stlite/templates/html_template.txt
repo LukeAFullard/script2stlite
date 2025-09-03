@@ -19,6 +19,7 @@
 import { mount } from "|STLITE_JS|"
 mount(
   {
+    |SHARED_WORKER_OPTION|
     streamlitConfig : |CONFIG|,
     requirements: |APP_REQUIREMENTS|,
     entrypoint: "|APP_ENTRYPOINT|",

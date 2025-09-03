@@ -103,3 +103,40 @@ def test_s2s_convert_simple_app(tmp_path, mocker):
     assert "assets/image.png" in html_content
     # Check for base64 encoded image data
     assert "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" in html_content
+
+
+def test_s2s_convert_shared_worker(tmp_path, mocker):
+    # 1. Create a mock project
+    project_dir = tmp_path / "my_project_shared"
+    project_dir.mkdir()
+
+    # Create settings.yaml with SHARED_WORKER: true
+    settings = {
+        "APP_NAME": "My Shared Worker App",
+        "APP_ENTRYPOINT": "app.py",
+        "SHARED_WORKER": True,
+    }
+    with open(project_dir / "settings.yaml", "w") as f:
+        yaml.dump(settings, f)
+
+    # Create app.py
+    with open(project_dir / "app.py", "w") as f:
+        f.write("import streamlit as st\nst.write('Hello from shared worker app')")
+
+    # 2. Mock load_all_versions
+    mock_versions = (
+        {"0.1.0": "css_url"}, "css_url",
+        {"0.1.0": "js_url"}, "js_url",
+        {"0.1.0": "pyodide_url"}, "pyodide_url"
+    )
+    mocker.patch('script2stlite.script2stlite.load_all_versions', return_value=mock_versions)
+
+    # 3. Run the conversion
+    s2s_convert(directory=str(project_dir))
+
+    # 4. Check the output
+    html_file = project_dir / "My_Shared_Worker_App.html"
+    assert html_file.is_file()
+
+    html_content = html_file.read_text()
+    assert "sharedWorker: true," in html_content
