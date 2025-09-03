@@ -33,6 +33,7 @@ pip install script2stlite
 * [More complex app conversion - Streamlit ECharts demo by Fanilo Andrianasolo](https://lukeafullard.github.io/script2stlite/example/Example_4_echarts_demo/Streamlit_echarts_demo.html)
 * [Example with Machine Learning - PixelHue by Juncel Datinggaling](https://lukeafullard.github.io/script2stlite/example/Example_5_PixelHue/PixelHue.html)
 * [How to add a config.toml file to control app appearance - Vizzu example by Germán Andrés and Castaño Vásquez](https://lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html)
+* [Shared Worker Example - two apps sharing state](https://lukeafullard.github.io/script2stlite/example/Example_7_shared_worker_counter/index.html)
 
 ## Quick Start with `Example_0_simple_app`
 
@@ -225,6 +226,24 @@ converter.convert(
 In this example, if `APP_REQUIREMENTS` in `settings.yaml` just listed `pandas` and `numpy`, the `packages` argument would provide more specific version constraints for `micropip`.
 
 However, for most use cases, defining your requirements directly in the `APP_REQUIREMENTS` list in `settings.yaml` with appropriate version specifiers (e.g., `pandas==1.5.3`, `matplotlib>=3.5`) is the recommended approach. The `packages` parameter offers an override mechanism primarily for scenarios where the user would like to keepa series of stlite apps on the same package versions. In theory this should reduce loading time for users since a single version of a package is downloaded, rather than multiple versions.
+
+### Using SharedWorker Mode
+
+For applications where multiple `stlite` instances might run on the same page, `stlite` offers a "SharedWorker mode" to conserve resources by running all apps in a single worker.
+
+To enable this mode, set the `SHARED_WORKER` key to `true` in your `settings.yaml`:
+
+```yaml
+SHARED_WORKER: true
+```
+
+When this is enabled, `script2stlite` will configure the `stlite.mount()` call with the `sharedWorker: true` option.
+
+**Key considerations for SharedWorker mode:**
+*   The Python environment and file system are shared across all apps.
+*   Package installations and module modifications are shared.
+*   It may not be supported in all browsers (e.g., Chrome on Android), in which case `stlite` will fall back to the default behavior.
+*   For more details, refer to the [stlite documentation on SharedWorker mode](https://github.com/whitphx/stlite?tab=readme-ov-file#sharedworker-mode).
 
 ### Using a Streamlit Configuration File (`config.toml`)
 

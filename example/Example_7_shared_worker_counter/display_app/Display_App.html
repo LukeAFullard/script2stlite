@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>My Test App</title>
+    <title>Display App</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.css"
@@ -19,19 +19,36 @@
 import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.js"
 mount(
   {
-
+    sharedWorker: true,
     streamlitConfig : {},
-    requirements: ['streamlit'],
+    requirements: [],
     entrypoint: "app.py",
     pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js",
     files: {
 "app.py": `
-
 import streamlit as st
-st.write('Hello, Streamlit!')
+from shared_state import st
+import time
+
+st.title("Display App")
+
+st.write("This app displays the counter value from the Control App.")
+
+placeholder = st.empty()
+
+while True:
+    with placeholder.container():
+        st.write(f"Current counter value: {st.session_state.counter}")
+    time.sleep(1)
 
 `,
+"shared_state.py":`import streamlit as st
 
+# This is a basic way to share state.
+# For more complex apps, you might want to use a more robust solution.
+if 'counter' not in st.session_state:
+    st.session_state.counter = 0
+`,
 },
   },
   document.getElementById("root")

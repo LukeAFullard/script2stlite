@@ -681,9 +681,15 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
                 app_files += f'"{file_j}":' + ' Ou("' + binary_text + '"),'
             else:
                 app_files += f'"{file_j}":' + '`' + load_text_from_file(os.path.join(directory,file_j)) + '`,'
-    html = replace_text(html, '|APP_FILES|', app_files, add_stlite_punctuation = False)   
+    html = replace_text(html, '|APP_FILES|', app_files, add_stlite_punctuation = False)
+
+    #10) Handle SharedWorker
+    if app_settings.get('SHARED_WORKER') is True:
+        html = replace_text(html, '|SHARED_WORKER_OPTION|', 'sharedWorker: true,', add_stlite_punctuation=False)
+    else:
+        html = replace_text(html, '|SHARED_WORKER_OPTION|', '', add_stlite_punctuation=False)
     
-    #10) return html
+    #11) return html
     return html
         
     

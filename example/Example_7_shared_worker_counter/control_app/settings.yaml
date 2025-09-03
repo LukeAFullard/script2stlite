@@ -1,0 +1,5 @@
+APP_NAME: "Control App"
+APP_ENTRYPOINT: "app.py"
+SHARED_WORKER: true
+APP_FILES:
+  - shared_state.py

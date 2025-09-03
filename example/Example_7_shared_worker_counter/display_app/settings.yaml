@@ -1,0 +1,5 @@
+APP_NAME: "Display App"
+APP_ENTRYPOINT: "app.py"
+SHARED_WORKER: true
+APP_FILES:
+  - shared_state.py
