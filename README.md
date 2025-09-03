@@ -33,7 +33,7 @@ pip install script2stlite
 * [More complex app conversion - Streamlit ECharts demo by Fanilo Andrianasolo](https://lukeafullard.github.io/script2stlite/example/Example_4_echarts_demo/Streamlit_echarts_demo.html)
 * [Example with Machine Learning - PixelHue by Juncel Datinggaling](https://lukeafullard.github.io/script2stlite/example/Example_5_PixelHue/PixelHue.html)
 * [How to add a config.toml file to control app appearance - Vizzu example by Germán Andrés and Castaño Vásquez](https://lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html)
-* [Shared Worker Example - two apps sharing state](https://lukeafullard.github.io/script2stlite/example/Example_7_shared_worker_counter/index.html)
+* [Shared Worker Example - two apps sharing one environment](https://lukeafullard.github.io/script2stlite/example/Example_7_shared_environment/index.html)
 
 ## Quick Start with `Example_0_simple_app`
 

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shared Worker Example</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        h1 { text-align: center; }
+        .container { display: flex; justify-content: space-around; }
+        .app-frame { width: 48%; height: 600px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Stlite Shared Worker Example</h1>
+    <p>This example demonstrates two separate stlite apps sharing the same Python environment using SharedWorker mode. The "Installer App" installs a package (`tiny-math`) that is not in its requirements. The "User App" can then import and use this package, even though it did not install it itself.</p>
+    <div class="container">
+        <iframe src="installer_app/Installer_App.html" class="app-frame" title="Installer App"></iframe>
+        <iframe src="user_app/User_App.html" class="app-frame" title="User App"></iframe>
+    </div>
+</body>
+</html>
