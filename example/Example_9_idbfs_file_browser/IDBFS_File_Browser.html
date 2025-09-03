@@ -59,10 +59,29 @@ else:
 
 st.subheader(f"Contents of \`{mount_point}\`:")
 
-if file_list:
-    st.code("\\n".join(sorted(file_list)), language="text")
-else:
+if not file_list:
     st.code(f"The \`{mount_point}\` directory is empty.", language="text")
+else:
+    st.write("Files in the persistent directory are listed below. You can delete files, but not directories with this tool.")
+    for file_path in sorted(file_list):
+        # We can only delete files, not directories, with this simple implementation.
+        is_file = not file_path.endswith('/')
+
+        col1, col2 = st.columns([0.8, 0.2])
+
+        with col1:
+            st.code(file_path, language="text")
+
+        if is_file:
+            with col2:
+                if st.button("Delete", key=f"delete_{file_path}", use_container_width=True):
+                    try:
+                        full_path = os.path.join(mount_point, file_path)
+                        os.remove(full_path)
+                        st.success(f"Deleted \`{file_path}\`")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error deleting \`{file_path}\`: {e}")
 
 `,
 
