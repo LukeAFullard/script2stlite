@@ -29,18 +29,25 @@ mount(
 import streamlit as st
 
 st.title("User App")
-st.write("This app attempts to use the \`mpmath\` package.")
 
-st.info("First, go to the Installer App and click the install button. Then, come back here and click the button below.")
+st.write(
+    "This app can use the \`mpmath\` package because the 'Installer App' includes it "
+    "in its requirements, and both apps are running in a shared environment."
+)
 
-if st.button("Try to use \`mpmath\`"):
+st.write("Click the button below to test the import and usage.")
+
+if st.button("Use \`mpmath\` package"):
     try:
         import mpmath
         st.success("Successfully imported \`mpmath\`!")
         result = mpmath.fadd(5, 3)
         st.write(f"The result of \`mpmath.fadd(5, 3)\` is: **{result}**")
     except ImportError:
-        st.error("Failed to import \`mpmath\`. Please make sure you have installed it in the Installer App.")
+        st.error(
+            "Failed to import \`mpmath\`. Make sure the 'Installer App' has \`mpmath\` "
+            "in its \`settings.yaml\` requirements."
+        )
     except Exception as e:
         st.error(f"An error occurred: {e}")
 

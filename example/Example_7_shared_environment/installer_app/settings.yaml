@@ -3,3 +3,4 @@ APP_ENTRYPOINT: "app.py"
 SHARED_WORKER: true
 APP_REQUIREMENTS:
   - streamlit
+  - mpmath
