@@ -2,8 +2,8 @@
 
 This example demonstrates the `SHARED_WORKER` mode of `script2stlite`. It consists of two separate Streamlit applications that share the same Python environment.
 
-- **Installer App**: This app uses `micropip` to install the `tiny-math` package.
-- **User App**: This app imports and uses the `tiny-math` package, even though it is not listed in its own requirements.
+- **Installer App**: This app uses `micropip` to install the `mpmath` package.
+- **User App**: This app imports and uses the `mpmath` package, even though it is not listed in its own requirements.
 
 This setup showcases how modifications to the Python environment (like installing packages) are shared across all apps running in the same shared worker.
 
@@ -16,4 +16,4 @@ This setup showcases how modifications to the Python environment (like installin
 2.  **Open `index.html`**:
     -   Open the `index.html` file in this directory in a web browser. This file displays both apps side-by-side in iframes.
 
-First, click the "Install `tiny-math` package" button in the "Installer App". Once it's installed, click the "Try to use `tiny-math`" button in the "User App". You should see a success message and the result of the `tiny_math.add()` function.
+First, click the "Install `mpmath` package" button in the "Installer App". Once it's installed, click the "Try to use `mpmath`" button in the "User App". You should see a success message and the result of the `mpmath.fadd()` function.
