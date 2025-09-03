@@ -10,7 +10,7 @@ This application will list the contents of the `/mnt` directory, which is config
 
 The IDBFS File Browser application has a simple structure:
 
--   `home.py`: The main Streamlit script that lists the files and directories within the `/mnt` directory.
+-   `home.py`: The main Streamlit script that lists files and directories within the `/mnt` directory and provides an option to delete files.
 -   `settings.yaml`: The configuration file for `script2stlite`, which specifies the same `IDBFS_MOUNTPOINTS` as Example 8.
 
 ## Key Features Demonstrated
@@ -18,6 +18,7 @@ The IDBFS File Browser application has a simple structure:
 1.  **Shared Persistent Storage**: This example confirms that the `IDBFS_MOUNTPOINTS` provides a shared and persistent filesystem. By using the same mount point (`/mnt`) as Example 8, this application can access and display the files created by the other.
 2.  **Inter-App Communication via Filesystem**: This demonstrates a powerful pattern for `stlite` applications: using the persistent filesystem as a way for different apps to share data or state without a server.
 3.  **Reading Directory Contents**: The `home.py` script uses standard Python `os.walk()` to traverse the `/mnt` directory and list its contents, showing how to interact with the persistent filesystem.
+4.  **Deleting Files from Persistent Storage**: The application includes a "Delete" button for each file, demonstrating how to remove files from the `IDBFS` filesystem using `os.remove()`. This completes the showcase of CRUD (Create, Read, Update, Delete) operations on the persistent storage when combined with Example 8.
 
 ## Steps to Convert This Streamlit App
 
@@ -72,7 +73,7 @@ print(f"Conversion complete! Check for '{converter.directory}/IDBFS_File_Browser
 
 ### 5. View Your Application
 
-Open the generated `IDBFS_File_Browser.html` in a web browser. You should see `log.txt` listed as a file in the `/mnt` directory. If you run Example 8 again, another timestamp will be added to the log, but the file listing here will remain the same.
+Open the generated `IDBFS_File_Browser.html` in a web browser. You should see `log.txt` listed as a file in the `/mnt` directory, along with a "Delete" button. You can click this button to remove the file from the persistent storage.
 
 You can view the output of this specific example hosted on GitHub Pages here:
 [https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html](https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html)
