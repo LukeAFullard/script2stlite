@@ -1,5 +1,5 @@
 import streamlit as st
-from shared_state import st
+import shared_state
 
 st.title("Control App")
 
