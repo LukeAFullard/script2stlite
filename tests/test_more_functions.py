@@ -1,10 +1,14 @@
 import pytest
 import os
+import base64
 from script2stlite.functions import (
     load_toml_from_file,
     file_exists,
     folder_exists,
     create_directory,
+    file_to_ou_base64_string,
+    write_text_file,
+    replace_text,
 )
 
 
@@ -56,3 +60,44 @@ def test_create_directory(tmp_path):
     nested_dir = tmp_path / "parent" / "child"
     assert create_directory(nested_dir) is True
     assert os.path.isdir(nested_dir)
+
+
+def test_file_to_ou_base64_string(tmp_path):
+    p = tmp_path / "test.bin"
+    content = b"some binary data"
+    p.write_bytes(content)
+
+    base64_content = file_to_ou_base64_string(p)
+
+    # Decode the result and check if it matches the original content
+    decoded_content = base64.b64decode(base64_content)
+    assert decoded_content == content
+
+
+def test_write_text_file(tmp_path, capsys):
+    p = tmp_path / "output.txt"
+    content = "Hello, this is a test."
+
+    write_text_file(p, content)
+
+    # Read the file back and check content
+    read_content = p.read_text()
+    assert read_content == content
+
+    # Check stdout
+    captured = capsys.readouterr()
+    assert f"Content successfully written to {p}" in captured.out
+
+
+def test_replace_text():
+    input_text = "Hello, |REPLACE_ME|!"
+    replace_flag = "|REPLACE_ME|"
+    replacement_text = "World"
+
+    # Test with stlite punctuation
+    result = replace_text(input_text, replace_flag, replacement_text, add_stlite_punctuation=True)
+    assert result == "Hello, `World`,!"
+
+    # Test without stlite punctuation
+    result = replace_text(input_text, replace_flag, replacement_text, add_stlite_punctuation=False)
+    assert result == "Hello, World!"
