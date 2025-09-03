@@ -256,6 +256,18 @@ font="sans serif"
 *   For a comprehensive list of all available configuration options, please refer to the [official Streamlit documentation on configuration](https://docs.streamlit.io/library/advanced-features/configuration).
 *   The example application in `example/Example_6_vizzu` demonstrates the use of a `config.toml` file to set a custom theme for the Vizzu charts.
 
+## Testing
+
+This repository includes a test suite to ensure the functionality of `script2stlite`.
+
+To run the tests and generate a datetime-stamped log file, use the provided script:
+
+```bash
+./run_tests.sh
+```
+
+This will execute the test suite using `pytest` and save a detailed log in the `test_logs` directory. The log file will be named with the date and time of the test run (e.g., `test_logs/test_run_2025-09-02_18-15-00.log`).
+
 ## Contributing
 
 Contributions are welcome! If you have suggestions for improvements, new features, or bug fixes, please feel free to:
