@@ -19,3 +19,7 @@ htmlcov/
 .DS_Store
 *~
 *.swp
+
+# Test logs
+test_logs/
+test_run_*.log

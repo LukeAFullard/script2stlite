@@ -648,9 +648,15 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
         html = replace_text(html, '|APP_ENTRYPOINT|', '', add_stlite_punctuation = False)
     
     #8) replace '|APP_HOME|'
-    #check is a py file
-    if not Path(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))).suffix == '.py': raise ValueError(f"APP ENTRYPOINT must be a .py file: {os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))}")
-    html = replace_text(html, '|APP_HOME|', load_text_from_file(os.path.join(directory,app_settings.get('APP_ENTRYPOINT'))), add_stlite_punctuation = False)   
+    entrypoint = app_settings.get('APP_ENTRYPOINT')
+    if not entrypoint:
+        raise ValueError("APP_ENTRYPOINT not defined in settings.yaml")
+
+    entrypoint_path = os.path.join(directory, entrypoint)
+    if not Path(entrypoint_path).suffix == '.py':
+        raise ValueError(f"APP ENTRYPOINT must be a .py file: {entrypoint_path}")
+
+    html = replace_text(html, '|APP_HOME|', load_text_from_file(entrypoint_path), add_stlite_punctuation=False)
     
     #9) replace |CONFIG|
     #check if it exists
