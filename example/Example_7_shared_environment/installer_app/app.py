@@ -1,17 +1,18 @@
 import streamlit as st
-import micropip
 
 st.title("Installer App")
-st.write("This app installs the `mpmath` package.")
 
-async def install_package():
-    st.write("Installing `mpmath`...")
-    await micropip.install('mpmath')
-    st.write("`mpmath` installed successfully!")
-    st.write("Now you can use it in the User App.")
+st.info(
+    "This app's `settings.yaml` file includes the `mpmath` package in its requirements."
+)
 
-# Using a button to trigger the installation
-if st.button("Install `mpmath` package"):
-    await install_package()
+st.write(
+    "Because this app and the 'User App' are running in a shared worker "
+    "(`SHARED_WORKER: true`), the `mpmath` package is available in the "
+    "environment for both apps."
+)
 
-st.info("After clicking the install button, go to the User App to see the effect.")
+st.write(
+    "You can now go to the **User App** and use the `mpmath` package without "
+    "any installation needed there."
+)

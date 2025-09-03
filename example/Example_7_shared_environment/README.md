@@ -2,10 +2,10 @@
 
 This example demonstrates the `SHARED_WORKER` mode of `script2stlite`. It consists of two separate Streamlit applications that share the same Python environment.
 
-- **Installer App**: This app uses `micropip` to install the `mpmath` package.
-- **User App**: This app imports and uses the `mpmath` package, even though it is not listed in its own requirements.
+- **Installer App**: This app's `settings.yaml` file lists `mpmath` as a requirement.
+- **User App**: This app can import and use the `mpmath` package because it shares the same environment as the 'Installer App', even though `mpmath` is not listed in its own requirements.
 
-This setup showcases how modifications to the Python environment (like installing packages) are shared across all apps running in the same shared worker.
+This setup showcases how the Python environment (including packages specified in `settings.yaml`) is shared across all apps running in the same shared worker.
 
 ## How to Run
 
@@ -16,4 +16,4 @@ This setup showcases how modifications to the Python environment (like installin
 2.  **Open `index.html`**:
     -   Open the `index.html` file in this directory in a web browser. This file displays both apps side-by-side in iframes.
 
-First, click the "Install `mpmath` package" button in the "Installer App". Once it's installed, click the "Try to use `mpmath`" button in the "User App". You should see a success message and the result of the `mpmath.fadd()` function.
+The 'Installer App' explains the setup. You can go directly to the 'User App' and click the "Use `mpmath` package" button to see that the package is available and works correctly.
