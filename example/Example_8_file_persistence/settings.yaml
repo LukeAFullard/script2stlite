@@ -1,0 +1,7 @@
+APP_NAME: "File Persistence Demo"
+APP_REQUIREMENTS:
+  - streamlit
+APP_ENTRYPOINT: home.py
+CONFIG: "none"
+IDBFS_MOUNTPOINTS: ['/mnt']
+APP_FILES: []

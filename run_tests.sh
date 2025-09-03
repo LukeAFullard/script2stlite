@@ -8,7 +8,7 @@ logfile="test_run_${now}.log"
 echo "Running tests and logging to ${logfile}..."
 
 # Run pytest and save the output to the logfile
-pytest -v --report-log="${logfile}"
+poetry run pytest -v --log-file="${logfile}"
 
 # Check the exit code of pytest
 if [ $? -eq 0 ]; then

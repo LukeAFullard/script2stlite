@@ -688,8 +688,17 @@ def create_html(directory: str, app_settings: Dict[str, Any], packages: Union[Di
         html = replace_text(html, '|SHARED_WORKER_OPTION|', 'sharedWorker: true,', add_stlite_punctuation=False)
     else:
         html = replace_text(html, '|SHARED_WORKER_OPTION|', '', add_stlite_punctuation=False)
+
+    #11) Handle IDBFS Mountpoints
+    if app_settings.get('IDBFS_MOUNTPOINTS') is not None:
+        import json
+        mountpoints_str = json.dumps(app_settings.get('IDBFS_MOUNTPOINTS'))
+        replacement = f"idbfsMountpoints: {mountpoints_str},"
+        html = replace_text(html, '|IDBFS_MOUNTPOINTS|', replacement, add_stlite_punctuation=False)
+    else:
+        html = replace_text(html, '|IDBFS_MOUNTPOINTS|', '', add_stlite_punctuation=False)
     
-    #11) return html
+    #12) return html
     return html
         
     
