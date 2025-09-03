@@ -12,6 +12,7 @@ from script2stlite.script2stlite import Script2StliteConverter
     "Example_5_PixelHue",
     "Example_3_streamlit_chect_sheet",
     "Example_8_file_persistence",
+    "Example_9_idbfs_file_browser",
 ])
 def test_example_generation(tmp_path, example_name):
     # 1. Define paths

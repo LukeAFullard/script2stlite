@@ -34,6 +34,7 @@ pip install script2stlite
 * [Example with Machine Learning - PixelHue by Juncel Datinggaling](https://lukeafullard.github.io/script2stlite/example/Example_5_PixelHue/PixelHue.html)
 * [How to add a config.toml file to control app appearance - Vizzu example by Germán Andrés and Castaño Vásquez](https://lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html)
 * [File Persistence Demo](https://lukeafullard.github.io/script2stlite/example/Example_8_file_persistence/File_Persistence_Demo.html)
+* [IDBFS File Browser](https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html)
 
 ## Quick Start with `Example_0_simple_app`
 

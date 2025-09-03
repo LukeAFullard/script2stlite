@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>IDBFS File Browser</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.js"
+mount(
+  {
+
+    streamlitConfig : {},
+    requirements: ['streamlit'],
+    entrypoint: "home.py",
+    idbfsMountpoints: ["/mnt"],
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js",
+    files: {
+"home.py": `
+import streamlit as st
+import os
+
+st.title("IDBFS File Browser")
+
+st.info(
+    "This app lists all files and directories in the persistent \`/mnt\` directory, "
+    "which is stored in your browser's IndexedDB. \\n\\n"
+    "Run the **File Persistence Demo (Example 8)** first to create a log file. "
+    "You should see that \`log.txt\` file listed here after running it."
+)
+
+mount_point = "/mnt"
+file_list = []
+
+if not os.path.exists(mount_point):
+    st.warning(f"The mount point \`{mount_point}\` does not exist. It will be created on the first file operation.")
+else:
+    for root, dirs, files in os.walk(mount_point):
+        # To make the path relative to the mount point for cleaner display
+        relative_root = os.path.relpath(root, mount_point)
+        if relative_root == ".":
+            relative_root = ""
+
+        for name in files:
+            file_list.append(os.path.join(relative_root, name))
+        for name in dirs:
+            # Adding a slash to indicate it's a directory
+            file_list.append(os.path.join(relative_root, name) + "/")
+
+st.subheader(f"Contents of \`{mount_point}\`:")
+
+if file_list:
+    st.code("\\n".join(sorted(file_list)), language="text")
+else:
+    st.code(f"The \`{mount_point}\` directory is empty.", language="text")
+
+`,
+
+},
+  },
+  document.getElementById("root")
+)
+
+function Ou(n){const i=window.atob(n),a=i.length,l=new Uint8Array(a);for(let u=0;u<a;u++)l[u]=i.charCodeAt(u);return l}
+    </script>
+  </body>
+  <!-- We love stlite! https://github.com/whitphx/stlite and Pyodide https://github.com/pyodide/pyodide -->
+</html>
