@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Display App</title>
+    <title>Installer App</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.css"
@@ -21,38 +21,31 @@ mount(
   {
     sharedWorker: true,
     streamlitConfig : {},
-    requirements: [],
+    requirements: ['streamlit'],
     entrypoint: "app.py",
     pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js",
     files: {
 "app.py": `
 import streamlit as st
-import shared_state
-import asyncio
+import micropip
 
-st.title("Display App")
+st.title("Installer App")
+st.write("This app installs the \`tiny-math\` package.")
 
-st.write("This app displays the counter value from the Control App.")
+async def install_package():
+    st.write("Installing \`tiny-math\`...")
+    await micropip.install('tiny-math')
+    st.write("\`tiny-math\` installed successfully!")
+    st.write("Now you can use it in the User App.")
 
-placeholder = st.empty()
+# Using a button to trigger the installation
+if st.button("Install \`tiny-math\` package"):
+    await install_package()
 
-async def watch_counter():
-    while True:
-        with placeholder.container():
-            st.write(f"Current counter value: {st.session_state.counter}")
-        await asyncio.sleep(1)
-
-# stlite supports top-level await
-await watch_counter()
+st.info("After clicking the install button, go to the User App to see the effect.")
 
 `,
-"shared_state.py":`import streamlit as st
 
-# This is a basic way to share state.
-# For more complex apps, you might want to use a more robust solution.
-if 'counter' not in st.session_state:
-    st.session_state.counter = 0
-`,
 },
   },
   document.getElementById("root")

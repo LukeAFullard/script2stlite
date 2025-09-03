@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Control App</title>
+    <title>User App</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.0/build/stlite.css"
@@ -21,29 +21,31 @@ mount(
   {
     sharedWorker: true,
     streamlitConfig : {},
-    requirements: [],
+    requirements: ['streamlit'],
     entrypoint: "app.py",
     pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js",
     files: {
 "app.py": `
 import streamlit as st
-import shared_state
 
-st.title("Control App")
+st.title("User App")
+st.write("This app attempts to use the \`tiny-math\` package.")
 
-if st.button("Increment Counter"):
-    st.session_state.counter += 1
+st.info("First, go to the Installer App and click the install button. Then, come back here and click the button below.")
 
-st.write(f"Current counter value: {st.session_state.counter}")
+if st.button("Try to use \`tiny-math\`"):
+    try:
+        import tiny_math
+        st.success("Successfully imported \`tiny-math\`!")
+        result = tiny_math.add(5, 3)
+        st.write(f"The result of \`tiny_math.add(5, 3)\` is: **{result}**")
+    except ImportError:
+        st.error("Failed to import \`tiny-math\`. Please make sure you have installed it in the Installer App.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 `,
-"shared_state.py":`import streamlit as st
 
-# This is a basic way to share state.
-# For more complex apps, you might want to use a more robust solution.
-if 'counter' not in st.session_state:
-    st.session_state.counter = 0
-`,
 },
   },
   document.getElementById("root")

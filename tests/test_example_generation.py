@@ -46,10 +46,10 @@ def test_example_generation(tmp_path, example_name):
 
 
 def test_example_7_generation(tmp_path):
-    example_name = "Example_7_shared_worker_counter"
+    example_name = "Example_7_shared_environment"
     example_dir_src = Path("example") / example_name
 
-    sub_apps = ["control_app", "display_app"]
+    sub_apps = ["installer_app", "user_app"]
 
     for sub_app in sub_apps:
         # 1. Define paths
