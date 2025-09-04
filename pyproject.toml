@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "script2stlite"
-version = "0.1.5"
+version = "0.2.0"
 description = "Package to convert a streamlit script and files to an stlite app (https://github.com/whitphx/stlite)"
 authors = ["LukeAFullard"]
 readme = "README.md"
@@ -8,17 +8,17 @@ repository = "https://github.com/LukeAFullard/script2stlite"
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.08"
-PyYAML = "^6.0.0" 
+python = ">=3.8,<4.0"
+PyYAML = "^6.0.0"
 requests = "^2.27.0"
 tomli = "^2.0.0"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
 pytest-playwright = "^0.5.0"
 pytest-mock = "^3.14.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
