@@ -165,9 +165,13 @@ Since `script2stlite` relies on `stlite` and Pyodide, it inherits their limitati
     *   **Micropip Version Resolution**: Package version resolution by `micropip` (used by Pyodide) can sometimes fail or lead to unexpected versions, especially with complex dependencies.
     *   For a comprehensive list of `stlite` limitations, refer to the official [stlite documentation](https://github.com/whitphx/stlite#limitations).
 
-*   **File System**:
+*   **File System and Persistence**:
     *   The default file system (MEMFS) provided by `stlite`/Pyodide is ephemeral. Any files written by your application at runtime (e.g., saving a generated file) will be lost when the browser tab is closed or reloaded.
-    *   `stlite` supports persistent storage using IDBFS (IndexedDB File System). However, `script2stlite` does not currently offer a direct configuration option in `settings.yaml` to set up IDBFS mount points. Implementing persistent storage would require manual modification of the generated HTML to include the `idbfsMountpoints` option in the `stlite.mount()` call, as described in the [stlite documentation on file persistence](https://github.com/whitphx/stlite#file-persistence-with-indexeddb-backend).
+    *   However, `script2stlite` supports persistent storage using IDBFS (IndexedDB File System) directly through the `settings.yaml` file. By specifying one or more directory paths under the `IDBFS_MOUNTPOINTS` key, you can ensure that any files written to those paths are saved in the browser's IndexedDB and persist across sessions.
+
+    For a hands-on demonstration, see [Example 8: File Persistence Demo](https://github.com/LukeAFullard/script2stlite/tree/main/example/Example_8_file_persistence), which shows how to write to a persistent file.
+
+    Additionally, [Example 9: IDBFS File Browser](https://github.com/LukeAFullard/script2stlite/tree/main/example/Example_9_idbfs_file_browser) illustrates how this persistent storage can be accessed and shared by other `stlite` applications.
 
 *   **HTTP Requests**:
     *   Standard Python networking libraries like `socket` do not work directly in the browser.
