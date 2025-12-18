@@ -515,7 +515,11 @@ def file_to_ou_base64_string(file_path: str) -> str:
         encoded: bytes = base64.b64encode(f.read())
         return encoded.decode("utf-8")
 ############################################################################### 
-def write_text_file(filename: str, content: str) -> None:
+def write_text_file(
+    filename: str,
+    content: str,
+    encoding: str = "utf-8"
+) -> None:
     """
     Write text content to a file.
 
@@ -531,7 +535,7 @@ def write_text_file(filename: str, content: str) -> None:
     None
     """
     try:
-        with open(filename, 'w') as f:
+        with open(filename, 'w', encoding=encoding) as f:
             f.write(content)
         print(f"Content successfully written to {filename}")
     except IOError:
