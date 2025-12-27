@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "script2stlite"
-version = "0.2.0"
+version = "0.2.1"
 description = "Package to convert a streamlit script and files to an stlite app (https://github.com/whitphx/stlite)"
 authors = ["LukeAFullard"]
 readme = "README.md"
