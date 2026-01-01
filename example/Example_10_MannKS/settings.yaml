@@ -1,0 +1,17 @@
+APP_NAME: "MannKenSen Analysis App"
+APP_REQUIREMENTS:
+  - streamlit
+  - pandas
+  - numpy
+  - matplotlib
+  - MannKS
+  - openpyxl
+APP_ENTRYPOINT: main.py
+CONFIG: "none"
+APP_FILES:
+  - modules/__init__.py
+  - modules/analysis.py
+  - modules/data_generator.py
+  - modules/data_loader.py
+  - modules/reporting.py
+  - modules/settings.py
