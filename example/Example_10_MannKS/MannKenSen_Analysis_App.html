@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>MannKenSen Analysis App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.95.1/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.95.1/build/stlite.js"
+mount(
+  {
+
+    streamlitConfig : {},
+    requirements: ['streamlit', 'pandas', 'numpy', 'matplotlib', 'MannKS', 'openpyxl'],
+    entrypoint: "main.py",
+
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js",
+    files: {
+"main.py": `
+import streamlit as st
+import pandas as pd
+from modules.data_loader import load_data_ui
+from modules.data_generator import generate_data_ui
+from modules.settings import render_settings_ui
+from modules.analysis import run_analysis
+from modules.reporting import generate_html_report
+
+# Set page config
+st.set_page_config(page_title="MannKenSen Analysis App", layout="wide", page_icon="📈")
+
+def inject_custom_css():
+    """Inject modern, sleek CSS into the Streamlit app"""
+    st.markdown("""
+    <style>
+    /* ============================================
+       GLOBAL STYLES
+       ============================================ */
+
+    /* Main app container */
+    .main {
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+    }
+
+    /* Headers */
+    h1, h2, h3 {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    h1 {
+        color: #1a1a1a;
+        font-size: 2.5rem !important;
+        margin-bottom: 1.5rem;
+    }
+
+    h2 {
+        color: #2c3e50;
+        font-size: 1.8rem !important;
+        margin-top: 2rem;
+    }
+
+    h3 {
+        color: #34495e;
+        font-size: 1.4rem !important;
+    }
+
+    /* ============================================
+       TAB STYLING - PROMINENT & MODERN
+       ============================================ */
+
+    /* Tab container */
+    .stTabs {
+        background: white;
+        border-radius: 16px;
+        padding: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin: 2rem 0;
+    }
+
+    /* Tab list (container for all tabs) */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 6px;
+    }
+
+    /* Individual tab buttons */
+    .stTabs [data-baseweb="tab"] {
+        height: 60px;
+        padding: 0 32px;
+        background: transparent;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        letter-spacing: 0.01em;
+    }
+
+    /* Tab hover effect */
+    .stTabs [data-baseweb="tab"]:hover {
+        background: rgba(59, 130, 246, 0.08);
+        color: #3b82f6;
+        transform: translateY(-2px);
+    }
+
+    /* Active tab */
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Active tab hover (maintain style) */
+    .stTabs [aria-selected="true"]:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    /* Tab content panel */
+    .stTabs [data-baseweb="tab-panel"] {
+        padding: 2rem 1rem;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+    /* Primary buttons */
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .stButton > button[kind="primary"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Secondary buttons */
+    .stButton > button {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .stButton > button:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    /* ============================================
+       CARDS & CONTAINERS
+       ============================================ */
+
+    /* Info boxes */
+    .stAlert {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: white;
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .streamlit-expanderHeader:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+
+    /* ============================================
+       INPUTS
+       ============================================ */
+
+    /* Text inputs, number inputs */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input {
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Select boxes */
+    .stSelectbox > div > div {
+        border-radius: 8px;
+    }
+
+    /* Radio buttons */
+    .stRadio > div {
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ============================================
+       DATAFRAMES
+       ============================================ */
+
+    .dataframe {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ============================================
+       SIDEBAR
+       ============================================ */
+
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    }
+
+    [data-testid="stSidebar"] .element-container {
+        color: white;
+    }
+
+    /* Sidebar text */
+    [data-testid="stSidebar"] .stMarkdown {
+        color: white;
+    }
+
+    /* ============================================
+       METRICS
+       ============================================ */
+
+    [data-testid="stMetricValue"] {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    [data-testid="stMetricLabel"] {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    /* ============================================
+       DOWNLOAD BUTTON
+       ============================================ */
+
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-size: 16px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .stDownloadButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .element-container {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    /* ============================================
+       SPINNER
+       ============================================ */
+
+    .stSpinner > div {
+        border-top-color: #667eea !important;
+    }
+
+    /* ============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================ */
+
+    @media (max-width: 768px) {
+        .stTabs [data-baseweb="tab"] {
+            height: 50px;
+            padding: 0 20px;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 2rem !important;
+        }
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+inject_custom_css()
+
+LOGO_URL = "https://raw.githubusercontent.com/LukeAFullard/MannKS/main/assets/logo.png"
+
+def main():
+    # Sidebar Logo
+    st.sidebar.image(LOGO_URL, use_container_width=True)
+    st.sidebar.markdown("---")
+
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        st.image(LOGO_URL, width=100)
+    with col2:
+        st.title("MannKenSen Analysis Tool")
+        st.markdown("""
+        Perform robust non-parametric trend analysis on unequally spaced time series with censored data.
+        """)
+
+    # Initialize Session State
+    if 'data' not in st.session_state:
+        st.session_state.data = None
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+
+    # --- Tabs ---
+    tab_data, tab_settings, tab_run, tab_results = st.tabs([
+        "1. Data", "2. Configure Settings", "3. Run Analysis", "4. Results & Report"
+    ])
+
+    # --- 1. Data Tab ---
+    with tab_data:
+        data_source = st.radio("Choose Data Source", ["Upload File", "Generate Synthetic Data"], horizontal=True)
+
+        if data_source == "Upload File":
+            df = load_data_ui()
+        else:
+            df = generate_data_ui()
+
+        if df is not None:
+            st.session_state.data = df
+
+        if st.session_state.data is not None:
+            st.info(f"Current Data: {len(st.session_state.data)} observations loaded.")
+            with st.expander("View Data"):
+                st.dataframe(st.session_state.data)
+
+    # --- 2. Settings Tab ---
+    with tab_settings:
+        # Returns a dict of settings for all tests
+        all_settings = render_settings_ui()
+        st.session_state.settings = all_settings
+
+    # --- 3. Run Analysis Tab ---
+    with tab_run:
+        st.header("Execute Analysis")
+
+        if st.session_state.data is None:
+            st.warning("Please load or generate data in the 'Data' tab first.")
+        else:
+            test_type = st.radio("Select Test to Run", ["Trend Test", "Seasonal Trend Test", "Seasonality Check"])
+
+            # Show preview of settings for selected test
+            if 'settings' in st.session_state:
+                current_settings = st.session_state.settings.get(test_type.lower().replace(" ", "_"), {})
+                st.markdown(f"**Current Settings for {test_type}:**")
+                st.json(current_settings)
+
+            if st.button("Run Analysis", type="primary"):
+                with st.spinner("Running analysis..."):
+                    # Get settings for this specific test
+                    # keys in settings.py were: 'trend_test', 'seasonal_trend_test', 'check_seasonality'
+                    key_map = {
+                        "Trend Test": "trend_test",
+                        "Seasonal Trend Test": "seasonal_trend_test",
+                        "Seasonality Check": "check_seasonality"
+                    }
+                    settings_key = key_map[test_type]
+                    params = st.session_state.settings.get(settings_key, {})
+
+                    # Run
+                    result = run_analysis(st.session_state.data, test_type, params)
+
+                    # Store in history
+                    st.session_state.history.append(result)
+
+                    st.success("Analysis complete! Go to the 'Results & Report' tab to view details.")
+
+    # --- 4. Results & Report Tab ---
+    with tab_results:
+        st.header("Analysis History")
+
+        if not st.session_state.history:
+            st.info("No analysis run yet.")
+        else:
+            # Report Download Button
+            report_html = generate_html_report(st.session_state.history)
+            st.download_button(
+                label="Download Full HTML Report",
+                data=report_html,
+                file_name="mannkensen_report.html",
+                mime="text/html"
+            )
+
+            st.markdown("---")
+
+            # Display History (Reverse order to show newest first)
+            for i, res in enumerate(reversed(st.session_state.history)):
+                idx = len(st.session_state.history) - i
+                with st.expander(f"Run {idx}: {res['test_type']} ({res['timestamp']})", expanded=(i==0)):
+
+                    if res.get('error'):
+                        st.error(f"Error: {res['error']}")
+                        if 'traceback' in res:
+                            st.code(res['traceback'])
+                    else:
+                        output = res['output']
+
+                        col1, col2 = st.columns([1, 2])
+
+                        with col1:
+                            st.subheader("Statistics")
+                            if hasattr(output, 'trend'): # Trend / Seasonal Trend
+                                st.metric("Trend", output.classification)
+                                st.write(f"**P-value:** {output.p:.4f}")
+                                st.write(f"**Slope:** {output.scaled_slope:.4g} {output.slope_units}")
+                                st.write(f"**Kendall's Tau:** {output.Tau:.4f}")
+                                st.write(f"**Confidence:** {output.C:.4f}")
+                                if output.analysis_notes:
+                                    st.warning(f"Notes: {', '.join(output.analysis_notes)}")
+
+                            elif hasattr(output, 'is_seasonal'): # Seasonality Check
+                                st.metric("Seasonal?", "Yes" if output.is_seasonal else "No")
+                                st.write(f"**H-Statistic:** {output.h_statistic:.4f}")
+                                st.write(f"**P-value:** {output.p_value:.4f}")
+
+                        with col2:
+                            if res.get('plot_bytes'):
+                                st.image(res['plot_bytes'], use_container_width=True)
+
+            if st.button("Clear History"):
+                st.session_state.history = []
+                st.rerun()
+
+if __name__ == "__main__":
+    main()
+
+`,
+"modules/__init__.py":``,"modules/analysis.py":`import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+import tempfile
+import os
+
+# Import MannKenSen functions
+from MannKS.trend_test import trend_test
+from MannKS.seasonal_trend_test import seasonal_trend_test
+from MannKS.check_seasonality import check_seasonality
+from MannKS.plotting import plot_seasonal_distribution
+
+def get_plot_as_image(fig):
+    """
+    Converts a matplotlib figure to a PIL Image or Base64 string.
+    Here we return BytesIO to display in st.image or save later.
+    """
+    buf = BytesIO()
+    fig.savefig(buf, format="png", bbox_inches='tight')
+    buf.seek(0)
+    return buf
+
+def run_analysis(data_df, test_type, settings):
+    """
+    Runs the specified test on the data using the provided settings.
+    Returns a result dictionary containing the test output and plot.
+    """
+    # Prepare inputs from data_df
+    # MannKS expects x (value vector or DF with censored cols) and t (time vector)
+    # Our data_df is standardized: ['t_original', 'value', 'censored', 'cen_type']
+
+    if data_df is None or len(data_df) == 0:
+        return {"error": "No data available."}
+
+    x_input = data_df[['value', 'censored', 'cen_type']]
+    t_input = data_df['t_original'].values
+
+    results = {}
+    results['test_type'] = test_type
+    results['timestamp'] = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    results['settings'] = settings
+
+    # Secure temporary file creation helper
+    def create_temp_plot_file():
+        tf = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        tf.close()
+        return tf.name
+
+    try:
+        if test_type == "Trend Test":
+            plot_filename = create_temp_plot_file()
+
+            # Run Test
+            params = settings.copy()
+            test_res = trend_test(x_input, t_input, plot_path=plot_filename, **params)
+
+            results['output'] = test_res
+            results['plot_path'] = plot_filename
+
+            # Read plot back into memory
+            if os.path.exists(plot_filename):
+                with open(plot_filename, "rb") as f:
+                    results['plot_bytes'] = f.read()
+                os.remove(plot_filename)
+            else:
+                results['plot_bytes'] = None
+
+        elif test_type == "Seasonal Trend Test":
+            plot_filename = create_temp_plot_file()
+
+            params = settings.copy()
+            test_res = seasonal_trend_test(x_input, t_input, plot_path=plot_filename, **params)
+
+            results['output'] = test_res
+            results['plot_path'] = plot_filename
+
+            if os.path.exists(plot_filename):
+                with open(plot_filename, "rb") as f:
+                    results['plot_bytes'] = f.read()
+                os.remove(plot_filename)
+            else:
+                results['plot_bytes'] = None
+
+        elif test_type == "Seasonality Check":
+            params = settings.copy()
+            test_res = check_seasonality(x_input, t_input, **params)
+            results['output'] = test_res
+
+            # Generate Plot manually
+            plot_filename = create_temp_plot_file()
+
+            plot_kwargs = {
+                'x': x_input,
+                't': t_input,
+                'period': params.get('period', 12),
+                'season_type': params.get('season_type', 'month'),
+                'plot_path': plot_filename,
+                'agg_method': params.get('agg_method', 'none')
+            }
+            # Only add agg_period if it exists in settings
+            if 'agg_period' in params:
+                 plot_kwargs['agg_period'] = params['agg_period']
+
+            plot_seasonal_distribution(**plot_kwargs)
+
+            if os.path.exists(plot_filename):
+                with open(plot_filename, "rb") as f:
+                    results['plot_bytes'] = f.read()
+                os.remove(plot_filename)
+            else:
+                results['plot_bytes'] = None
+
+    except Exception as e:
+        results['error'] = str(e)
+        import traceback
+        results['traceback'] = traceback.format_exc()
+
+    return results
+`,"modules/data_generator.py":`import streamlit as st
+import pandas as pd
+import numpy as np
+import datetime
+
+def generate_synthetic_data(
+    n_points,
+    start_date,
+    time_unit,
+    slope,
+    intercept,
+    season_period,
+    season_amplitude,
+    noise_std,
+    censor_threshold,
+    censor_type,
+    gap_fraction,
+    seed
+):
+    """
+    Generates synthetic time series data based on parameters.
+    """
+    np.random.seed(seed)
+
+    # 1. Generate Time Vector
+    # We'll create a base range and then maybe drop some
+    # We use a base integer range first for calculation
+    t_idx = np.arange(n_points)
+
+    # 2. Calculate Trend Component
+    # slope is "units per time_unit"
+    # We need to map time_unit to our t_idx step
+    # If we assume t_idx represents "1 unit of time_unit", it's simple:
+    trend = intercept + (slope * t_idx)
+
+    # 3. Calculate Seasonal Component
+    # Simple Sinusoidal: A * sin(2 * pi * t / P)
+    if season_amplitude > 0 and season_period > 0:
+        seasonal = season_amplitude * np.sin(2 * np.pi * t_idx / season_period)
+    else:
+        seasonal = np.zeros(n_points)
+
+    # 4. Noise
+    noise = np.random.normal(0, noise_std, n_points)
+
+    # 5. Combine
+    y_raw = trend + seasonal + noise
+
+    # 6. Apply Censoring
+    # logic: if value < threshold, make it censored
+    # We will construct the 'censored' and 'cen_type' columns directly
+    censored = np.zeros(n_points, dtype=bool)
+    cen_type = np.full(n_points, 'not', dtype=object)
+
+    # We need to handle the values. For censored data, the value stored
+    # is usually the detection limit.
+    y_final = y_raw.copy()
+
+    if censor_type == 'Left (<)':
+        mask = y_raw < censor_threshold
+        y_final[mask] = censor_threshold
+        censored[mask] = True
+        cen_type[mask] = 'lt'
+    elif censor_type == 'Right (>)':
+        mask = y_raw > censor_threshold
+        y_final[mask] = censor_threshold
+        censored[mask] = True
+        cen_type[mask] = 'gt'
+
+    # 7. Convert Time to Datetime or Numeric
+    # If Start Date is provided, we create a DatetimeIndex
+    if start_date is not None:
+        # map unit string to pandas freq
+        freq_map = {
+            'Seconds': 's',
+            'Minutes': 'min',
+            'Hours': 'h',
+            'Days': 'D',
+            'Weeks': 'W',
+            'Months': 'ME', # Month End
+            'Years': 'YE'   # Year End
+        }
+        freq = freq_map.get(time_unit, 'D')
+        t_final = pd.date_range(start=start_date, periods=n_points, freq=freq)
+    else:
+        t_final = t_idx
+
+    # 8. Create DataFrame
+    df = pd.DataFrame({
+        't_original': t_final,
+        'value': y_final,
+        'censored': censored,
+        'cen_type': cen_type,
+        'true_value': y_raw # Keep true value for reference/debugging
+    })
+
+    # 9. Apply Gaps (Missing Data)
+    if gap_fraction > 0:
+        n_drop = int(n_points * gap_fraction)
+        if n_drop > 0:
+            drop_indices = np.random.choice(df.index, n_drop, replace=False)
+            df = df.drop(drop_indices).sort_values(by='t_original').reset_index(drop=True)
+
+    return df
+
+def generate_data_ui():
+    """
+    Renders the Synthetic Data Generator UI and returns the generated DataFrame.
+    """
+    st.markdown("### Generate Synthetic Data")
+    st.markdown("Create a custom dataset to test the analysis tools.")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        n_points = st.number_input("Number of Points (N)", min_value=10, max_value=5000, value=100)
+        time_unit = st.selectbox("Time Unit", ["Days", "Months", "Years", "Seconds", "Minutes", "Hours", "Weeks"])
+        start_date = st.date_input("Start Date", value=datetime.date(2020, 1, 1))
+
+    with col2:
+        intercept = st.number_input("Base Value (Intercept)", value=10.0)
+        slope = st.number_input("Trend Slope (units per time step)", value=0.1, format="%.4f")
+        seed = st.number_input("Random Seed (Numpy)", value=42, step=1)
+
+    with col3:
+        noise_std = st.number_input("Noise (Std Dev)", value=1.0)
+        gap_fraction = st.slider("Missing Data Fraction", 0.0, 0.9, 0.0)
+
+    st.markdown("#### Seasonality")
+    scol1, scol2 = st.columns(2)
+    with scol1:
+        season_period = st.number_input("Seasonal Period (steps)", min_value=0, value=12, help="0 to disable")
+    with scol2:
+        season_amplitude = st.number_input("Seasonal Amplitude", value=2.0)
+
+    st.markdown("#### Censoring")
+    ccol1, ccol2 = st.columns(2)
+    with ccol1:
+        censor_type = st.selectbox("Censoring Type", ["None", "Left (<)", "Right (>)"])
+    with ccol2:
+        censor_threshold = st.number_input("Detection Limit / Threshold", value=5.0)
+
+    if st.button("Generate Data"):
+        # Map "None" censor type to internal logic
+        if censor_type == "None":
+            # Pass a threshold that won't trigger (e.g., -inf for Left)
+            # But simpler to just handle in logic.
+            # We'll pass logic check inside the function, but for now lets just pass the input
+            pass
+
+        df = generate_synthetic_data(
+            n_points, start_date, time_unit, slope, intercept,
+            season_period, season_amplitude, noise_std,
+            censor_threshold, censor_type, gap_fraction, seed
+        )
+
+        st.success("Data generated successfully!")
+        st.write(f"Generated {len(df)} points.")
+        st.dataframe(df.head())
+
+        # Simple plot preview
+        st.line_chart(df.set_index('t_original')['value'])
+
+        return df
+
+    return None
+`,"modules/data_loader.py":`import streamlit as st
+import pandas as pd
+import numpy as np
+from io import StringIO
+from MannKS.preprocessing import prepare_censored_data
+
+def read_file(uploaded_file):
+    """
+    Reads an uploaded file (CSV or Excel) into a pandas DataFrame.
+    """
+    if uploaded_file.name.endswith('.csv'):
+        return pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith(('.xls', '.xlsx')):
+        return pd.read_excel(uploaded_file)
+    else:
+        st.error("Unsupported file format. Please upload a CSV or Excel file.")
+        return None
+
+def process_input_data(df, value_col, time_col, censored_col=None, censored_flag_col=None):
+    """
+    Normalizes the input DataFrame into the format required by MannKS.
+    Returns a DataFrame with columns: ['t_original', 'value', 'censored', 'cen_type']
+    """
+    try:
+        # 1. Handle Time
+        # Try to convert to datetime first
+        try:
+            t_original = pd.to_datetime(df[time_col])
+        except Exception:
+            # If numeric, keep as is
+            t_original = df[time_col]
+
+        # 2. Handle Values and Censoring
+        if censored_col:
+            # Case A: Single column with combined strings (e.g., "<5", "10")
+            # prepare_censored_data expects a 1D array/series
+            processed_values = prepare_censored_data(df[censored_col].values)
+
+            # If the user also selected a separate value column, we might want to warn or just use the processed one.
+            # Assuming if they picked a censored_col (string), that's the source of truth.
+
+        elif censored_flag_col:
+            # Case B: Separate Value and Flag columns
+            # We need to construct the censoring logic manually to match MannKS format
+            vals = pd.to_numeric(df[value_col], errors='coerce')
+
+            # Inspect flag column to guess format (True/False, 1/0, "Yes"/"No", "<")
+            flags = df[censored_flag_col]
+
+            # Simple heuristic: treat truthy values as censored
+            # For robustness, we'll assume standard boolean-like or specific strings
+            is_censored = flags.apply(lambda x: str(x).lower() in ['true', '1', 'yes', 'censored', '<', 'lt'])
+
+            # Create cen_type (assuming left censoring by default for now, could be improved)
+            cen_type = np.where(is_censored, 'lt', 'not')
+
+            processed_values = pd.DataFrame({
+                'value': vals,
+                'censored': is_censored,
+                'cen_type': cen_type
+            })
+
+        else:
+            # Case C: Plain values, no censoring
+            vals = pd.to_numeric(df[value_col], errors='coerce')
+            processed_values = pd.DataFrame({
+                'value': vals,
+                'censored': np.zeros(len(vals), dtype=bool),
+                'cen_type': np.full(len(vals), 'not')
+            })
+
+        # Combine
+        final_df = processed_values.copy()
+        final_df['t_original'] = t_original.values
+
+        # Sort by time
+        final_df = final_df.sort_values(by='t_original').reset_index(drop=True)
+
+        return final_df
+
+    except Exception as e:
+        st.error(f"Error processing data: {str(e)}")
+        return None
+
+def load_data_ui():
+    """
+    Renders the File Upload UI and returns the processed DataFrame.
+    """
+    st.markdown("### Upload Data")
+    st.markdown("Upload a CSV or Excel file. Your data should be in long format (one row per observation).")
+
+    uploaded_file = st.file_uploader("Choose a file", type=['csv', 'xlsx', 'xls'])
+
+    if uploaded_file is not None:
+        df = read_file(uploaded_file)
+
+        if df is not None:
+            st.write("Preview of raw data:", df.head())
+
+            st.markdown("#### Map Columns")
+            cols = df.columns.tolist()
+
+            col1, col2 = st.columns(2)
+            with col1:
+                time_col = st.selectbox("Select Time Column", options=cols)
+            with col2:
+                # User can either select a 'Value' column OR a 'Censored String' column
+                # We'll offer a mode switch
+                input_mode = st.radio("Data Format", ["Numeric Value Column", "Combined String Column (e.g. '<0.5')"], horizontal=True)
+
+            censored_col = None
+            censored_flag_col = None
+            value_col = None
+
+            if input_mode == "Combined String Column (e.g. '<0.5')":
+                censored_col = st.selectbox("Select Column with Values (including censored strings)", options=cols)
+                value_col = censored_col # Placeholder, logic uses censored_col
+            else:
+                value_col = st.selectbox("Select Value Column", options=cols)
+                has_flag = st.checkbox("I have a separate Censored Flag column")
+                if has_flag:
+                    censored_flag_col = st.selectbox("Select Censored Flag Column", options=cols)
+
+            if st.button("Process Data"):
+                processed_df = process_input_data(df, value_col, time_col, censored_col, censored_flag_col)
+                if processed_df is not None:
+                    st.success("Data processed successfully!")
+                    st.write("Preview of processed data for analysis:", processed_df.head())
+                    # Return or Store in session state?
+                    # Better to return, let main handle storage
+                    return processed_df
+
+    return None
+`,"modules/reporting.py":`import base64
+import pandas as pd
+
+def generate_html_report(history):
+    """
+    Generates a single HTML report string from the session history.
+    """
+    html = """
+    <html>
+    <head>
+        <title>MannKenSen Analysis Report</title>
+        <style>
+            body { font-family: sans-serif; max-width: 900px; margin: 20px auto; color: #333; }
+            h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+            h2 { color: #2980b9; margin-top: 40px; }
+            .test-block { border: 1px solid #ddd; padding: 20px; border-radius: 5px; margin-bottom: 30px; background: #fafafa; }
+            .stats-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+            .stats-table th, .stats-table td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+            .stats-table th { background-color: #f1f1f1; }
+            .img-container { text-align: center; margin-top: 20px; }
+            img { max-width: 100%; border: 1px solid #ccc; }
+            .error { color: red; }
+            .meta { font-size: 0.9em; color: #666; margin-bottom: 10px; }
+            .settings { font-size: 0.85em; color: #555; background: #eef; padding: 10px; border-radius: 4px; }
+        </style>
+    </head>
+    <body>
+        <h1>MannKenSen Analysis Report</h1>
+        <p>Generated on: """ + pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S") + """</p>
+    """
+
+    if not history:
+        html += "<p>No tests run.</p></body></html>"
+        return html
+
+    for i, res in enumerate(history):
+        test_type = res.get('test_type', 'Unknown Test')
+        timestamp = res.get('timestamp', '')
+        error = res.get('error', None)
+        output = res.get('output', None)
+        plot_bytes = res.get('plot_bytes', None)
+        settings = res.get('settings', {})
+
+        html += f"""
+        <div class="test-block">
+            <h2>{i+1}. {test_type}</h2>
+            <div class="meta">Run at: {timestamp}</div>
+        """
+
+        # Settings Section
+        html += "<div class='settings'><strong>Settings:</strong> "
+        settings_str = ", ".join([f"{k}={v}" for k,v in settings.items()])
+        html += settings_str + "</div>"
+
+        if error:
+            html += f"<p class='error'><strong>Error:</strong> {error}</p>"
+        elif output:
+            # Build stats table based on result type
+            html += "<h3>Results</h3>"
+            html += "<table class='stats-table'>"
+
+            # Common fields for Trend/Seasonal
+            if hasattr(output, 'trend'):
+                # Trend Test Result
+                html += f"""
+                <tr><th>Trend Classification</th><td>{output.classification}</td></tr>
+                <tr><th>P-value</th><td>{output.p:.4f}</td></tr>
+                <tr><th>Sen's Slope</th><td>{output.scaled_slope:.4g} {output.slope_units}</td></tr>
+                <tr><th>Kendall's Tau</th><td>{output.Tau:.4f}</td></tr>
+                <tr><th>Mann-Kendall Score (S)</th><td>{output.s:.1f}</td></tr>
+                <tr><th>Confidence (C)</th><td>{output.C:.4f}</td></tr>
+                """
+                if hasattr(output, 'analysis_notes') and output.analysis_notes:
+                    html += f"<tr><th>Analysis Notes</th><td>{', '.join(output.analysis_notes)}</td></tr>"
+
+            elif hasattr(output, 'is_seasonal'):
+                # Seasonality Check Result
+                status = "Seasonal" if output.is_seasonal else "Not Seasonal"
+                html += f"""
+                <tr><th>Result</th><td><strong>{status}</strong></td></tr>
+                <tr><th>H-Statistic</th><td>{output.h_statistic:.4f}</td></tr>
+                <tr><th>P-value</th><td>{output.p_value:.4f}</td></tr>
+                """
+                if output.seasons_skipped:
+                    html += f"<tr><th>Skipped Seasons</th><td>{output.seasons_skipped}</td></tr>"
+
+            html += "</table>"
+
+            # Image embedding
+            if plot_bytes:
+                b64_img = base64.b64encode(plot_bytes).decode('utf-8')
+                html += f"""
+                <div class="img-container">
+                    <img src="data:image/png;base64,{b64_img}" alt="Analysis Plot" />
+                </div>
+                """
+
+        html += "</div>" # End test-block
+
+    html += """
+    </body>
+    </html>
+    """
+    return html
+`,"modules/settings.py":`import streamlit as st
+
+def render_settings_ui():
+    """
+    Renders the configuration tabs for the analysis tools and returns a dictionary
+    containing the settings for each test.
+    """
+    st.markdown("### Analysis Configuration")
+    st.markdown("Configure the parameters for the statistical tests.")
+
+    # Initialize settings dictionary
+    settings = {}
+
+    # Create tabs for the three main tools
+    tab1, tab2, tab3 = st.tabs(["Trend Test", "Seasonal Trend Test", "Seasonality Check"])
+
+    # --- Tab 1: Trend Test ---
+    with tab1:
+        st.markdown("**Mann-Kendall Trend Test Settings**")
+
+        # We need to namespace these keys so they don't conflict across tabs if we used same keys
+        # But we can just build the dict directly.
+
+        tt_alpha = st.number_input("Significance Level (alpha)", 0.001, 0.5, 0.05, key='tt_alpha',
+                                   help="The probability of rejecting the null hypothesis when it is true.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            tt_mk_method = st.selectbox("MK Test Method", ["robust", "lwp"], key='tt_mk_method',
+                                        help="'robust' handles right-censored data without modification. 'lwp' uses a heuristic replacement.")
+            tt_sens_method = st.selectbox("Sen's Slope Method", ["nan", "lwp", "ats"], key='tt_sens_method',
+                                          help="Method for handling ambiguous slopes in censored data. 'ats' is most robust but slower.")
+
+        with col2:
+            tt_ci_method = st.selectbox("Confidence Interval Method", ["direct", "lwp"], key='tt_ci_method',
+                                        help="'direct' uses rank rounding, 'lwp' uses interpolation.")
+            tt_tau_method = st.selectbox("Kendall's Tau Method", ["b", "a"], key='tt_tau_method',
+                                         help="'b' adjusts for ties (recommended).")
+
+        st.markdown("---")
+        st.markdown(" **Aggregation Settings** (Optional)")
+
+        col3, col4 = st.columns(2)
+        with col3:
+            tt_agg_method = st.selectbox("Aggregation Method",
+                                         ['none', 'median', 'robust_median', 'middle', 'middle_lwp', 'lwp', 'lwp_median', 'lwp_robust_median'],
+                                         key='tt_agg_method',
+                                         help="Method to aggregate data before analysis. 'none' is default.")
+        with col4:
+            tt_agg_period = st.text_input("Aggregation Period", value="", key='tt_agg_period',
+                                          help="e.g. 'year', 'month'. Required if using LWP aggregation methods on datetime data.")
+            if tt_agg_period.strip() == "":
+                tt_agg_period = None
+
+        st.markdown("---")
+        st.markdown("**Scaling**")
+        tt_slope_scaling = st.selectbox("Scale Slope To:", ["None", "year", "month", "day"], key='tt_slope_scaling',
+                                        help="Convert the slope unit (e.g. per second) to a human readable unit.")
+        if tt_slope_scaling == "None":
+            tt_slope_scaling = None
+
+        settings['trend_test'] = {
+            'alpha': tt_alpha,
+            'mk_test_method': tt_mk_method,
+            'sens_slope_method': tt_sens_method,
+            'ci_method': tt_ci_method,
+            'tau_method': tt_tau_method,
+            'agg_method': tt_agg_method,
+            'agg_period': tt_agg_period,
+            'slope_scaling': tt_slope_scaling
+        }
+
+    # --- Tab 2: Seasonal Trend Test ---
+    with tab2:
+        st.markdown("**Seasonal Mann-Kendall Test Settings**")
+
+        st_alpha = st.number_input("Significance Level (alpha)", 0.001, 0.5, 0.05, key='st_alpha')
+        st_period = st.number_input("Seasonal Period (Cycles)", min_value=2, value=12, key='st_period',
+                                    help="Number of seasons in a full cycle (e.g., 12 for months).")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st_season_type = st.selectbox("Season Type",
+                                          ['month', 'quarter', 'day_of_week', 'week_of_year', 'day_of_year', 'hour', 'minute', 'second', 'year'],
+                                          key='st_season_type')
+            st_mk_method = st.selectbox("MK Test Method", ["robust", "lwp"], key='st_mk_method')
+
+        with col2:
+            st_sens_method = st.selectbox("Sen's Slope Method", ["nan", "lwp", "ats"], key='st_sens_method')
+            st_ci_method = st.selectbox("Confidence Interval Method", ["direct", "lwp"], key='st_ci_method')
+
+        st.markdown("---")
+        st.markdown("**Aggregation Settings**")
+
+        col3, col4 = st.columns(2)
+        with col3:
+            st_agg_method = st.selectbox("Aggregation Method",
+                                         ['none', 'median', 'robust_median', 'middle', 'middle_lwp', 'lwp'],
+                                         key='st_agg_method')
+        with col4:
+            # Added Aggregation Period for Seasonal Trend Test
+            st_agg_period = st.text_input("Aggregation Period", value="", key='st_agg_period',
+                                          help="Time unit to aggregate by (e.g. 'month') if using an aggregation method.")
+            if st_agg_period.strip() == "":
+                st_agg_period = None
+
+        st.markdown("---")
+        st.markdown("**Scaling**")
+        st_slope_scaling = st.selectbox("Scale Slope To:", ["None", "year", "month", "day"], key='st_slope_scaling')
+        if st_slope_scaling == "None":
+            st_slope_scaling = None
+
+        settings['seasonal_trend_test'] = {
+            'alpha': st_alpha,
+            'period': st_period,
+            'season_type': st_season_type,
+            'mk_test_method': st_mk_method,
+            'sens_slope_method': st_sens_method,
+            'ci_method': st_ci_method,
+            'agg_method': st_agg_method,
+            'agg_period': st_agg_period,
+            'slope_scaling': st_slope_scaling,
+            'tau_method': 'b' # Defaulting to b for simplicity in UI, could add if needed
+        }
+
+    # --- Tab 3: Seasonality Check ---
+    with tab3:
+        st.markdown("**Seasonality Check (Kruskal-Wallis) Settings**")
+
+        sc_alpha = st.number_input("Significance Level (alpha)", 0.001, 0.5, 0.05, key='sc_alpha')
+        sc_period = st.number_input("Seasonal Period (Cycles)", min_value=2, value=12, key='sc_period')
+        sc_season_type = st.selectbox("Season Type",
+                                      ['month', 'quarter', 'day_of_week', 'week_of_year', 'day_of_year', 'hour', 'minute', 'second'],
+                                      key='sc_season_type')
+
+        st.markdown("---")
+        st.markdown("**Aggregation Settings**")
+        st.info("It is recommended to use the same aggregation method here as in the Seasonal Trend Test.")
+
+        sc_agg_method = st.selectbox("Aggregation Method",
+                                     ['none', 'median', 'robust_median', 'middle', 'middle_lwp'],
+                                     key='sc_agg_method')
+
+        sc_agg_period = st.text_input("Aggregation Period", value="month", key='sc_agg_period',
+                                      help="Time unit to aggregate by (e.g. 'month'). Required if agg_method is not 'none'.")
+        if sc_agg_method != 'none' and sc_agg_period.strip() == "":
+            st.warning("Aggregation Period is required when Aggregation Method is not 'none'.")
+            sc_agg_period = None
+        elif sc_agg_method == 'none':
+            sc_agg_period = None
+
+        settings['check_seasonality'] = {
+            'alpha': sc_alpha,
+            'period': sc_period,
+            'season_type': sc_season_type,
+            'agg_method': sc_agg_method,
+            'agg_period': sc_agg_period
+        }
+
+    return settings
+`,
+},
+  },
+  document.getElementById("root")
+)
+
+function Ou(n){const i=window.atob(n),a=i.length,l=new Uint8Array(a);for(let u=0;u<a;u++)l[u]=i.charCodeAt(u);return l}
+    </script>
+  </body>
+  <!-- We love stlite! https://github.com/whitphx/stlite and Pyodide https://github.com/pyodide/pyodide -->
+</html>
