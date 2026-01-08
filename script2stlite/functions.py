@@ -3,7 +3,7 @@ import yaml
 import tomli
 import os
 import shutil
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple, Union, List
 from pathlib import Path
 import base64
 
@@ -181,6 +181,40 @@ def flatten_dict(d: Dict[str, Any], parent_key: str = "", sep: str = ".") -> Dic
         else:
             items[new_key] = v
     return items
+
+def parse_requirements(file_path: Union[str, os.PathLike]) -> List[str]:
+    """
+    Parse a requirements.txt file and return a list of requirements.
+
+    Parameters
+    ----------
+    file_path : Union[str, os.PathLike]
+        Path to the requirements.txt file.
+
+    Returns
+    -------
+    List[str]
+        A list of requirement strings.
+    """
+    requirements = []
+    if not os.path.isfile(file_path):
+        return requirements
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                # Skip comments and empty lines
+                if not line or line.startswith('#'):
+                    continue
+                # For now, we assume standard pip-style requirements
+                # We do not strictly validate them here, relying on micropip to handle/reject them
+                requirements.append(line)
+    except Exception as e:
+        print(f"Warning: Failed to parse requirements file {file_path}: {e}")
+
+    return requirements
+
 
 def load_text_from_file(
     path: Union[str, os.PathLike],

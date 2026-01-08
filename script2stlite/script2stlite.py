@@ -1,4 +1,4 @@
-from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
+from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file, parse_requirements
 from .discovery import find_imports, find_assets
 import os
 from pathlib import Path
@@ -130,6 +130,26 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     settings.update({"|STLITE_CSS|":stylesheet})
     settings.update({"|STLITE_JS|":js})
     settings.update({"|PYODIDE_VERSION|":pyodide})
+
+    # --- Auto Discovery: requirements.txt ---
+    req_file = os.path.join(directory, 'requirements.txt')
+    if os.path.isfile(req_file):
+        print(f"* Found requirements.txt in {directory}. Parsing...")
+        file_reqs = parse_requirements(req_file)
+
+        current_reqs = settings.get('APP_REQUIREMENTS')
+        if current_reqs is None:
+            current_reqs = []
+
+        # Merge requirements, avoiding exact duplicates
+        # Note: This does not handle version conflicts or parsing complex specs (e.g. pandas vs pandas>=1.0)
+        # It simply checks for string equality.
+        for r in file_reqs:
+            if r not in current_reqs:
+                current_reqs.append(r)
+                print(f"  - Added requirement from file: {r}")
+
+        settings['APP_REQUIREMENTS'] = current_reqs
     
     #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template.
     app_files = settings.get('APP_FILES', [])
