@@ -1,4 +1,5 @@
 from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
+from .discovery import find_imports, find_assets
 import os
 from pathlib import Path
 from typing import Union, Optional, Dict
@@ -132,6 +133,33 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     
     #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template.
     app_files = settings.get('APP_FILES', [])
+    if app_files is None:
+        app_files = []
+
+    # --- Auto Discovery ---
+    entrypoint = settings.get('APP_ENTRYPOINT')
+    if entrypoint:
+        entrypoint_path = os.path.join(directory, entrypoint)
+        if os.path.isfile(entrypoint_path):
+            print(f"* Starting auto-discovery of modules and assets from {entrypoint}...")
+            # 1. Find imports
+            discovered_modules = find_imports(entrypoint_path, directory)
+            # 2. Find assets (checking both entrypoint and discovered modules)
+            discovered_assets = find_assets(entrypoint_path, directory, discovered_modules)
+
+            # 3. Merge with existing app_files
+            for f in discovered_modules:
+                if f not in app_files:
+                    app_files.append(f)
+                    print(f"  - Auto-discovered module: {f}")
+            for f in discovered_assets:
+                if f not in app_files:
+                    app_files.append(f)
+                    print(f"  - Auto-discovered asset: {f}")
+
+            # Update settings with discovered files so create_html uses them
+            settings['APP_FILES'] = app_files
+
     if settings.get('APP_ENTRYPOINT') in app_files:
         app_files.remove(settings.get('APP_ENTRYPOINT'))
     
