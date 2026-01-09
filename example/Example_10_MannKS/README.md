@@ -1,6 +1,6 @@
-# Example 8: File Persistence Demo
+# Example 10: MannKenSen Analysis App
 
-Demonstrates using IDBFS for persistent storage.
+A statistical analysis app.
 
 ## One-Step Conversion (Recommended)
 
@@ -13,11 +13,10 @@ Demonstrates using IDBFS for persistent storage.
     ```python
     from script2stlite import Script2StliteConverter
 
-    converter = Script2StliteConverter("example/Example_8_file_persistence")
+    converter = Script2StliteConverter("example/Example_10_MannKS")
     converter.convert_from_entrypoint(
-        app_name="File Persistence Demo",
-        entrypoint="home.py",
-        idbfs_mountpoints=['/mnt'] # Specify mountpoints
+        app_name="MannKenSen Analysis App",
+        entrypoint="main.py"
     )
     ```
 
@@ -26,10 +25,10 @@ Demonstrates using IDBFS for persistent storage.
 1.  **Prepare:**
     ```python
     from script2stlite import Script2StliteConverter
-    converter = Script2StliteConverter("example/Example_8_file_persistence")
+    converter = Script2StliteConverter("example/Example_10_MannKS")
     converter.prepare_folder()
     ```
-2.  **Configure:** Edit `settings.yaml` (set `IDBFS_MOUNTPOINTS: ['/mnt']`).
+2.  **Configure:** Edit `settings.yaml`.
 3.  **Convert:**
     ```python
     converter.convert()
