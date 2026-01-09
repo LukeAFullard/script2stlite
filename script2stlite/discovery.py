@@ -136,6 +136,34 @@ def find_imports(script_path: str, root_dir: str) -> Set[str]:
     # Remove the script itself if it was added (unlikely if resolve_module works correctly relative to root)
     return discovered_files
 
+def find_pages(root_dir: str) -> Set[str]:
+    """
+    Find all python scripts in the 'pages' subdirectory, which Streamlit
+    treats as multipage app pages.
+
+    Parameters
+    ----------
+    root_dir : str
+        The root directory of the application.
+
+    Returns
+    -------
+    Set[str]
+        A set of relative file paths for pages.
+    """
+    pages_dir = os.path.join(root_dir, 'pages')
+    discovered_pages = set()
+
+    if os.path.isdir(pages_dir):
+        for root, dirs, files in os.walk(pages_dir):
+            for file in files:
+                if file.endswith('.py'):
+                    full_path = os.path.join(root, file)
+                    rel_path = os.path.relpath(full_path, root_dir)
+                    discovered_pages.add(rel_path)
+
+    return discovered_pages
+
 def resolve_module(module_name: str, root_dir: str) -> List[str]:
     """
     Resolve a module name to a list of file paths.
