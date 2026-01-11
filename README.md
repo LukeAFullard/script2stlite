@@ -22,7 +22,7 @@ Version 0.3.0 introduces major simplifications to the workflow:
 
 ### Quick Start (The New Way)
 
-You can convert your app in a single step using the `convert_from_entrypoint` method.
+You can convert your app in a single step using the top-level `convert_app` function.
 
 **Prerequisites:**
 *   A folder containing your Streamlit app (e.g., `app.py`).
@@ -31,13 +31,10 @@ You can convert your app in a single step using the `convert_from_entrypoint` me
 **Example:**
 
 ```python
-from script2stlite import Script2StliteConverter
+import script2stlite
 
-# Point to your app's directory
-converter = Script2StliteConverter(directory="my_app_folder")
-
-# Convert!
-converter.convert_from_entrypoint(
+script2stlite.convert_app(
+    directory="my_app_folder",
     app_name="My Cool App",
     entrypoint="app.py"
 )

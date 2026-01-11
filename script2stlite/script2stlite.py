@@ -342,3 +342,54 @@ class Script2StliteConverter:
             pyodide_version=pyodide_version,
             packages=packages
         )
+
+def convert_app(
+    directory: str,
+    app_name: str,
+    entrypoint: str,
+    config: Optional[str] = None,
+    shared_worker: bool = False,
+    idbfs_mountpoints: Optional[list] = None,
+    extra_files: Optional[list] = None,
+    stlite_version: Optional[str] = None,
+    pyodide_version: Optional[str] = None,
+    packages: Optional[Dict[str, str]] = None
+) -> None:
+    """
+    Shortcut function to convert a Streamlit app in one step.
+
+    Parameters
+    ----------
+    directory : str
+        The root directory of the Streamlit application.
+    app_name : str
+        The name of the application.
+    entrypoint : str
+        The entrypoint script filename (must be in the directory).
+    config : Optional[str], optional
+        Path to streamlit config file (relative to directory). Default None.
+    shared_worker : bool, optional
+        Whether to use SharedWorker mode. Default False.
+    idbfs_mountpoints : Optional[list], optional
+        List of mountpoints for IDBFS. Default None.
+    extra_files : Optional[list], optional
+        List of extra files to include manually. Default None.
+    stlite_version : Optional[str], optional
+        The specific version of stlite to use.
+    pyodide_version : Optional[str], optional
+        The specific version of Pyodide to use.
+    packages : Optional[Dict[str, str]], optional
+        Package version overrides.
+    """
+    converter = Script2StliteConverter(directory=directory)
+    converter.convert_from_entrypoint(
+        app_name=app_name,
+        entrypoint=entrypoint,
+        config=config,
+        shared_worker=shared_worker,
+        idbfs_mountpoints=idbfs_mountpoints,
+        extra_files=extra_files,
+        stlite_version=stlite_version,
+        pyodide_version=pyodide_version,
+        packages=packages
+    )
