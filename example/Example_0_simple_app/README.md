@@ -6,7 +6,7 @@ This example demonstrates the workflow of using `script2stlite` to convert a sim
 
 ## One-Step Conversion (Recommended)
 
-As of version 0.3.0, you can convert your app in a single step using the `convert_from_entrypoint` method. This method automatically discovers your app's dependencies and assets.
+As of version 0.3.0, you can convert your app in a single step using the top-level `convert_app` function. This method automatically discovers your app's dependencies and assets.
 
 ### 1. Prerequisites
 
@@ -27,13 +27,10 @@ numpy
 Create a python script (e.g., `build.py`) with the following content and run it:
 
 ```python
-from script2stlite import Script2StliteConverter
+import script2stlite
 
-# Initialize the converter pointing to this example folder
-converter = Script2StliteConverter(directory="example/Example_0_simple_app")
-
-# Convert the app
-converter.convert_from_entrypoint(
+script2stlite.convert_app(
+    directory="example/Example_0_simple_app",
     app_name="my simple app",
     entrypoint="home.py"
 )

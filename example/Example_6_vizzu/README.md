@@ -11,10 +11,10 @@ This example shows how to include a `config.toml` file.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_6_vizzu")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_6_vizzu",
         app_name="Vizzu example",
         entrypoint="streamlitvizzu.py",
         config=".streamlit/config.toml"  # Pass the config file path

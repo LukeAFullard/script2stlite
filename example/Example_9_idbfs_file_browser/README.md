@@ -11,10 +11,10 @@ A file browser for the persistent IDBFS storage.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_9_idbfs_file_browser")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_9_idbfs_file_browser",
         app_name="IDBFS File Browser",
         entrypoint="home.py",
         idbfs_mountpoints=['/mnt'] # Specify mountpoints

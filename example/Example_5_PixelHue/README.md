@@ -11,10 +11,10 @@ An example using scikit-learn for image color extraction.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_5_PixelHue")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_5_PixelHue",
         app_name="PixelHue",
         entrypoint="main.py"
     )

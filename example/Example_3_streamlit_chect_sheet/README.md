@@ -11,10 +11,10 @@ A conversion of the official Streamlit cheat sheet.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_3_streamlit_chect_sheet")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_3_streamlit_chect_sheet",
         app_name="Streamlit cheat sheet",
         entrypoint="app.py"
     )

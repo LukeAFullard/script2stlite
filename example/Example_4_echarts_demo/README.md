@@ -11,10 +11,10 @@ A complex app with many submodules and data files.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_4_echarts_demo")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_4_echarts_demo",
         app_name="Streamlit echarts demo",
         entrypoint="app.py"
     )

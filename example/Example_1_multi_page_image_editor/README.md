@@ -11,10 +11,10 @@ This example demonstrates how to convert a multi-page Streamlit application.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_1_multi_page_image_editor")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_1_multi_page_image_editor",
         app_name="Image Editor",
         entrypoint="app.py"
     )

@@ -11,10 +11,10 @@ Demonstrates using IDBFS for persistent storage.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_8_file_persistence")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_8_file_persistence",
         app_name="File Persistence Demo",
         entrypoint="home.py",
         idbfs_mountpoints=['/mnt'] # Specify mountpoints

@@ -11,10 +11,10 @@ This example fetches data from an API and displays it using Plotly.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_2_bitcoin_price_app")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_2_bitcoin_price_app",
         app_name="Current BTC vs USD Price Tracker",
         entrypoint="app.py"
     )

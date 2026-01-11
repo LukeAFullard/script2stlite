@@ -11,10 +11,10 @@ A statistical analysis app.
     Run the following Python script:
 
     ```python
-    from script2stlite import Script2StliteConverter
+    import script2stlite
 
-    converter = Script2StliteConverter("example/Example_10_MannKS")
-    converter.convert_from_entrypoint(
+    script2stlite.convert_app(
+        directory="example/Example_10_MannKS",
         app_name="MannKenSen Analysis App",
         entrypoint="main.py"
     )
