@@ -1,35 +1,32 @@
 # Example 2: Bitcoin Price Tracker
 
-This example fetches data from an API and displays it using Plotly.
+This example shows how to convert a Streamlit app that fetches data from an API (CoinDesk) and visualizes it using Plotly.
 
 ## One-Step Conversion (Recommended)
 
-1.  **Prerequisites:**
-    *   Ensure `requirements.txt` is present.
+Ensure you have your `requirements.txt` ready:
+```text
+streamlit
+requests
+plotly
+pandas
+```
 
-2.  **Convert:**
-    Run the following Python script:
+Create a build script (e.g., `build.py`):
 
-    ```python
-    import script2stlite
+```python
+import script2stlite
 
-    script2stlite.convert_app(
-        directory="example/Example_2_bitcoin_price_app",
-        app_name="Current BTC vs USD Price Tracker",
-        entrypoint="app.py"
-    )
-    ```
+script2stlite.convert_app(
+    directory="example/Example_2_bitcoin_price_app",
+    app_name="Current BTC vs USD Price Tracker",
+    entrypoint="app.py"
+)
+```
 
-## Legacy Instructions
+Run it to generate `Current_BTC_vs_USD_Price_Tracker.html`.
 
-1.  **Prepare:**
-    ```python
-    from script2stlite import Script2StliteConverter
-    converter = Script2StliteConverter("example/Example_2_bitcoin_price_app")
-    converter.prepare_folder()
-    ```
-2.  **Configure:** Edit `settings.yaml`.
-3.  **Convert:**
-    ```python
-    converter.convert()
-    ```
+## Features
+- **Data Fetching**: Uses `requests` to get live data.
+- **Visualization**: Uses `plotly` for interactive charts.
+- **Pandas**: Uses `pandas` for data manipulation.

@@ -9,6 +9,16 @@ EXAMPLE_CONFIGS = {
         "app_name": "my simple app",
         "entrypoint": "home.py",
         "config": None
+    },
+    "Example_1_multi_page_image_editor": {
+        "app_name": "Image Editor",
+        "entrypoint": "app.py",
+        "config": None
+    },
+    "Example_2_bitcoin_price_app": {
+        "app_name": "Current BTC vs USD Price Tracker",
+        "entrypoint": "app.py",
+        "config": None
     }
 }
 
