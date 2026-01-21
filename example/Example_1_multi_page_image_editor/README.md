@@ -1,37 +1,30 @@
 # Example 1: Multi-Page Image Editor
 
-This example demonstrates how to convert a multi-page Streamlit application.
+This example demonstrates how to convert a multi-page Streamlit application with image processing capabilities (using Pillow) into a standalone HTML file.
 
 ## One-Step Conversion (Recommended)
 
-1.  **Prerequisites:**
-    *   Ensure `requirements.txt` is present (it should list `streamlit` and `Pillow`).
+Ensure you have your `requirements.txt` ready:
+```text
+streamlit
+Pillow
+```
 
-2.  **Convert:**
-    Run the following Python script:
+Create a build script (e.g., `build.py`):
 
-    ```python
-    import script2stlite
+```python
+import script2stlite
 
-    script2stlite.convert_app(
-        directory="example/Example_1_multi_page_image_editor",
-        app_name="Image Editor",
-        entrypoint="app.py"
-    )
-    ```
+script2stlite.convert_app(
+    directory="example/Example_1_multi_page_image_editor",
+    app_name="Image Editor",
+    entrypoint="app.py"
+)
+```
 
-    `script2stlite` will automatically detect the `pages/` directory and include all subpages (`01_Home.py`, etc.) and assets.
+Run it to generate `Image_Editor.html`.
 
-## Legacy Instructions
-
-1.  **Prepare:**
-    ```python
-    from script2stlite import Script2StliteConverter
-    converter = Script2StliteConverter("example/Example_1_multi_page_image_editor")
-    converter.prepare_folder()
-    ```
-2.  **Configure:** Edit `settings.yaml`.
-3.  **Convert:**
-    ```python
-    converter.convert()
-    ```
+## Features
+- **Multi-page support**: Demonstrates how `pages/` directory is automatically handled.
+- **External libraries**: Uses `Pillow` for image manipulation.
+- **Asset embedding**: Includes `assets/image.png` automatically.
