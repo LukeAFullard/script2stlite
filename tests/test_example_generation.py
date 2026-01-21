@@ -4,6 +4,14 @@ import shutil
 import yaml
 from script2stlite.script2stlite import Script2StliteConverter
 
+EXAMPLE_CONFIGS = {
+    "Example_0_simple_app": {
+        "app_name": "my simple app",
+        "entrypoint": "home.py",
+        "config": None
+    }
+}
+
 @pytest.mark.parametrize("example_name", [
     "Example_0_simple_app",
     "Example_1_multi_page_image_editor",
@@ -27,12 +35,22 @@ def test_example_generation(tmp_path, example_name):
 
     # 3. Run the conversion in the temporary directory
     converter = Script2StliteConverter(directory=str(project_dir_tmp))
-    converter.convert()
 
-    # 4. Locate the generated HTML file in the temporary directory
-    with open(project_dir_tmp / "settings.yaml", "r") as f:
-        settings = yaml.safe_load(f)
-    app_name = settings["APP_NAME"]
+    if example_name in EXAMPLE_CONFIGS:
+        config = EXAMPLE_CONFIGS[example_name]
+        converter.convert_from_entrypoint(
+            app_name=config["app_name"],
+            entrypoint=config["entrypoint"],
+            config=config["config"]
+        )
+        app_name = config["app_name"]
+    else:
+        converter.convert()
+        # 4. Locate the generated HTML file in the temporary directory
+        with open(project_dir_tmp / "settings.yaml", "r") as f:
+            settings = yaml.safe_load(f)
+        app_name = settings["APP_NAME"]
+
     generated_filename = app_name.replace(" ", "_") + ".html"
     generated_html_path = project_dir_tmp / generated_filename
 
