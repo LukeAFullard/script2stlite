@@ -1,133 +1,85 @@
 import os
 import pytest
-from script2stlite.discovery import find_imports, find_assets
+from script2stlite.discovery import discover_all_files
 
-def test_audit_f_string_asset(tmp_path):
+def test_inclusion_of_all_files(tmp_path):
     """
-    Caveat: Assets referenced via constructed strings (e.g. f-strings) are NOT detected.
-    Only static string literals are detected.
+    Verify that all files in the directory are discovered, regardless of usage.
+    This covers dynamic imports, f-string assets, and unused files.
     """
     app_dir = tmp_path / "app"
     app_dir.mkdir()
 
-    # Create a dummy data file
+    # Create various files
+    (app_dir / "main.py").write_text("import foo")
+    (app_dir / "foo.py").write_text("x=1")
     (app_dir / "data.csv").write_text("data")
+    (app_dir / "unused.txt").write_text("unused")
+    (app_dir / ".env").write_text("SECRET=1") # Should be ignored by default
 
-    # Case 1: F-string (Dynamic) - NOT Detected
-    code_dynamic = """
-filename = "data"
-ext = ".csv"
-st.write(f"{filename}{ext}")
+    # Create subdirectories
+    (app_dir / "pages").mkdir()
+    (app_dir / "pages/page1.py").write_text("st.write('page')")
+
+    (app_dir / "utils").mkdir()
+    (app_dir / "utils/__init__.py").write_text("")
+    (app_dir / "utils/helper.py").write_text("def help(): pass")
+
+    # Run discovery
+    files = discover_all_files(str(app_dir))
+
+    # Assertions
+    assert "main.py" in files
+    assert "foo.py" in files
+    assert "data.csv" in files
+    assert "unused.txt" in files
+    assert "pages/page1.py" in files
+    assert "utils/__init__.py" in files
+    assert "utils/helper.py" in files
+
+    # Default ignores
+    assert ".env" not in files
+
+def test_ignored_directories(tmp_path):
     """
-    (app_dir / "app_dynamic.py").write_text(code_dynamic)
-
-    assets_dynamic = find_assets(str(app_dir / "app_dynamic.py"), str(app_dir))
-    assert "data.csv" not in assets_dynamic
-
-    # Case 2: Static String Literal - Detected
-    code_static = """
-st.write("data.csv")
-    """
-    (app_dir / "app_static.py").write_text(code_static)
-
-    assets_static = find_assets(str(app_dir / "app_static.py"), str(app_dir))
-    assert "data.csv" in assets_static
-
-
-def test_audit_dynamic_imports(tmp_path):
-    """
-    Caveat: Dynamic imports (e.g. importlib) are NOT detected.
-    """
-    app_dir = tmp_path / "app"
-    app_dir.mkdir()
-
-    (app_dir / "helper.py").write_text("x=1")
-
-    code_dynamic = """
-import importlib
-importlib.import_module('helper')
-    """
-    (app_dir / "app.py").write_text(code_dynamic)
-
-    imports = find_imports(str(app_dir / "app.py"), str(app_dir))
-    assert "helper.py" not in imports
-
-
-def test_audit_false_positive_asset(tmp_path):
-    """
-    Caveat/Issue: String literals that match a local filename are included as assets,
-    even if the string is used for something else (e.g. an exclusion list, a variable value).
+    Verify that standard ignored directories are skipped.
     """
     app_dir = tmp_path / "app"
     app_dir.mkdir()
 
-    # A file that we might NOT want to include, or just happens to exist
-    (app_dir / "secret.key").write_text("SECRET")
+    (app_dir / "code.py").write_text("print(1)")
 
-    # Code that mentions the filename in a string
-    code = """
-exclude_files = ["secret.key"]
-print("Ignored files:", exclude_files)
+    # .git
+    (app_dir / ".git").mkdir()
+    (app_dir / ".git/config").write_text("config")
+
+    # __pycache__
+    (app_dir / "__pycache__").mkdir()
+    (app_dir / "__pycache__/code.cpython-39.pyc").write_text("bin")
+
+    # venv
+    (app_dir / "venv").mkdir()
+    (app_dir / "venv/bin").mkdir()
+    (app_dir / "venv/bin/python").write_text("bin")
+
+    files = discover_all_files(str(app_dir))
+
+    assert "code.py" in files
+    assert ".git/config" not in files
+    assert "__pycache__/code.cpython-39.pyc" not in files
+    assert "venv/bin/python" not in files
+
+def test_custom_ignores(tmp_path):
     """
-    (app_dir / "app.py").write_text(code)
-
-    assets = find_assets(str(app_dir / "app.py"), str(app_dir))
-
-    # Current behavior: It IS found and included.
-    assert "secret.key" in assets
-
-def test_audit_wildcard_imports(tmp_path):
-    """
-    Caveat: 'from package import *' only includes package/__init__.py.
-    It does not scan the package directory for other modules unless __init__.py imports them.
-    Logic relying on __all__ to export non-imported submodules will fail to bundle them.
-    """
-    app_dir = tmp_path / "app"
-    app_dir.mkdir()
-
-    pkg_dir = app_dir / "pkg"
-    pkg_dir.mkdir()
-    (pkg_dir / "__init__.py").write_text("__all__ = ['submodule']")
-    (pkg_dir / "submodule.py").write_text("x=1")
-
-    code = """
-from pkg import *
-    """
-    (app_dir / "app.py").write_text(code)
-
-    imports = find_imports(str(app_dir / "app.py"), str(app_dir))
-
-    # It finds __init__.py
-    assert "pkg/__init__.py" in imports
-    # It does NOT find submodule.py because it wasn't imported in __init__.py
-    assert "pkg/submodule.py" not in imports
-
-def test_audit_complex_imports(tmp_path):
-    """
-    Verification: Complex relative and nested imports work correctly.
+    Verify that custom ignore sets work.
     """
     app_dir = tmp_path / "app"
     app_dir.mkdir()
 
-    # Structure:
-    # app.py -> imports pkg.sub.deep
-    # pkg/sub/deep.py -> imports ..sibling and .local
+    (app_dir / "keep.txt").write_text("keep")
+    (app_dir / "ignore_me.txt").write_text("ignore")
 
-    pkg_dir = app_dir / "pkg"
-    pkg_dir.mkdir()
-    (pkg_dir / "__init__.py").write_text("")
-    (pkg_dir / "sibling.py").write_text("s=1")
+    files = discover_all_files(str(app_dir), ignore_files={'ignore_me.txt'})
 
-    sub_dir = pkg_dir / "sub"
-    sub_dir.mkdir()
-    (sub_dir / "__init__.py").write_text("")
-    (sub_dir / "local.py").write_text("l=1")
-    (sub_dir / "deep.py").write_text("from .. import sibling\nfrom . import local")
-
-    (app_dir / "app.py").write_text("import pkg.sub.deep")
-
-    imports = find_imports(str(app_dir / "app.py"), str(app_dir))
-
-    assert "pkg/sub/deep.py" in imports
-    assert "pkg/sibling.py" in imports
-    assert "pkg/sub/local.py" in imports
+    assert "keep.txt" in files
+    assert "ignore_me.txt" not in files

@@ -1,5 +1,5 @@
 from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file, parse_requirements
-from .discovery import find_imports, find_assets, find_pages
+from .discovery import discover_all_files
 import os
 from pathlib import Path
 from typing import Union, Optional, Dict, Any
@@ -118,53 +118,17 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
         app_files = []
 
     # --- Auto Discovery ---
-    entrypoint = settings.get('APP_ENTRYPOINT')
-    if entrypoint:
-        entrypoint_path = os.path.join(directory, entrypoint)
-        if os.path.isfile(entrypoint_path):
-            print(f"* Starting auto-discovery of modules and assets from {entrypoint}...")
+    # We now discover ALL files in the directory (respecting default ignores)
+    print(f"* Starting discovery of all files in {directory}...")
+    discovered_files = discover_all_files(directory)
 
-            # 1. Find imports starting from entrypoint
-            discovered_modules = find_imports(entrypoint_path, directory)
+    for f in discovered_files:
+        if f not in app_files:
+            app_files.append(f)
+            # print(f"  - Discovered file: {f}") # Can be verbose
 
-            # 2. Find multipage app pages
-            discovered_pages = find_pages(directory)
-
-            # 3. Recursively find imports for discovered pages
-            # We add pages to discovered_modules set temporarily to scan them
-            # But pages themselves should be treated as files, not necessarily modules to be imported by others
-            # However, scanning them for imports is crucial.
-            for page in discovered_pages:
-                full_page_path = os.path.join(directory, page)
-                page_imports = find_imports(full_page_path, directory)
-                discovered_modules.update(page_imports)
-
-            # 4. Find assets (checking entrypoint, modules, and pages)
-            # Combine all python files to scan for assets
-            all_python_files = discovered_modules.union(discovered_pages)
-            discovered_assets = find_assets(entrypoint_path, directory, all_python_files)
-
-            # 5. Merge with existing app_files
-            # Add modules
-            for f in discovered_modules:
-                if f not in app_files:
-                    app_files.append(f)
-                    print(f"  - Auto-discovered module: {f}")
-
-            # Add pages
-            for f in discovered_pages:
-                if f not in app_files:
-                    app_files.append(f)
-                    print(f"  - Auto-discovered page: {f}")
-
-            # Add assets
-            for f in discovered_assets:
-                if f not in app_files:
-                    app_files.append(f)
-                    print(f"  - Auto-discovered asset: {f}")
-
-            # Update settings with discovered files so create_html uses them
-            settings['APP_FILES'] = app_files
+    # Update settings with discovered files so create_html uses them
+    settings['APP_FILES'] = app_files
 
     if settings.get('APP_ENTRYPOINT') in app_files:
         app_files.remove(settings.get('APP_ENTRYPOINT'))
