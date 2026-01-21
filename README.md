@@ -10,14 +10,26 @@ This project was created to easily allow **existing** streamlit apps to be conve
 
 The creator of stlite and edit.share.stlite.net is [Yuichiro Tachibana (whitphx)](https://github.com/whitphx/stlite)
 
+## ⚠️ Security Warning: Clean Directory Requirement ⚠️
+
+**Please read this section carefully before using `script2stlite`.**
+
+Version 0.3.0+ uses an "Include All" strategy for bundling your application. This means:
+
+1.  **ALL FILES** in the directory you provide (and its subdirectories) will be bundled into the generated HTML file and **publicly accessible** to anyone who views the page.
+2.  **DO NOT** include secrets, API keys, passwords, or sensitive environment files (like `.env`, `secrets.toml`, `.pem`) in the directory you are converting.
+3.  **Clean Directory Principle**: We strongly recommend creating a dedicated "build" or "dist" directory for your app that contains **only** the files needed for the app to run.
+
+**Default Exclusions:**
+The following files and directories are excluded by default to keep the bundle clean, but you should not rely on this as your primary security control:
+*   **Directories**: `.git`, `__pycache__`, `venv`, `.venv`, `env`, `.mypy_cache`, `.pytest_cache`, `dist`, `build`, `.idea`, `.vscode`, `node_modules`
+*   **Files**: `.DS_Store`, `.gitignore`, `.env`
+
 ## New in v0.3.0
 
 Version 0.3.0 introduces major simplifications to the workflow:
 
-1.  **Auto-Discovery**: The converter now automatically finds:
-    *   **Imported Modules**: Recursively finds local Python modules imported by your script.
-    *   **Assets**: Scans your code for references to local files (like images, data files) and includes them.
-    *   **Requirements**: Automatically parses `requirements.txt` if present in the directory.
+1.  **Auto-Discovery**: The converter now automatically bundles **all files** in your project directory. This fixes issues with dynamic imports, f-strings, and complex asset paths.
 2.  **One-Step Conversion**: You can now convert an app without creating a `settings.yaml` file manually.
 
 ### Quick Start (The New Way)
@@ -40,12 +52,12 @@ script2stlite.convert_app(
 )
 ```
 
-This will generate `My_Cool_App.html` in `my_app_folder`. It will automatically find `helper.py` if imported, `data.csv` if referenced in a string, and install packages from `requirements.txt`.
+This will generate `My_Cool_App.html` in `my_app_folder`. It will automatically include `helper.py`, `data.csv`, `images/logo.png`, and any other file present in the folder.
 
 ## Features
 
 *   **One-Step Conversion**: Convert straight from Python code without configuration files.
-*   **Automatic Discovery**: Intelligently finds dependencies and assets to include.
+*   **Full Directory Bundling**: automatically bundles all files in the directory, ensuring no missing assets or modules.
 *   **Prepare Project Folders**: Initialize a directory with the necessary structure (`pages` subdirectory) and a template `settings.yaml` configuration file (Legacy mode).
 *   **Convert to HTML**: Bundle your Streamlit application (main script, pages, requirements, and other assets) into a single HTML file.
 *   **Class-Based Conversion**: Offers a `Script2StliteConverter` class for an object-oriented approach to managing the conversion process.
@@ -71,9 +83,9 @@ pip install script2stlite
 
 ## Legacy / Advanced Configuration
 
-The original workflow using `settings.yaml` is still fully supported and recommended for complex configurations or when you need explicit control over every file included.
+The original workflow using `settings.yaml` is still fully supported and recommended for complex configurations or when you need explicit control over dependencies.
 
-**Note:** Even when using this legacy method, the new **Auto-Discovery** features are active! Files found via imports, assets, or `requirements.txt` will be merged with your manual `settings.yaml` configuration.
+**Note:** Even when using this legacy method, the new **Full Directory Bundling** is active! All files in the directory will be merged with your manual `settings.yaml` configuration.
 
 ### 1. Initialize the Converter and Prepare the Folder
 
