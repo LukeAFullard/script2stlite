@@ -19,7 +19,8 @@ DEFAULT_IGNORE_DIRS = {
 DEFAULT_IGNORE_FILES = {
     '.DS_Store',
     '.gitignore',
-    '.env'
+    '.env',
+    'requirements.txt'
 }
 
 def discover_all_files(root_dir: str, ignore_dirs: Set[str] = None, ignore_files: Set[str] = None) -> Set[str]:
