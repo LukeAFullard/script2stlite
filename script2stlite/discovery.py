@@ -43,8 +43,13 @@ def discover_all_files(root_dir: str, ignore_dirs: Set[str] = None, ignore_files
     """
     if ignore_dirs is None:
         ignore_dirs = DEFAULT_IGNORE_DIRS
+    else:
+        ignore_dirs = DEFAULT_IGNORE_DIRS.union(ignore_dirs)
+
     if ignore_files is None:
         ignore_files = DEFAULT_IGNORE_FILES
+    else:
+        ignore_files = DEFAULT_IGNORE_FILES.union(ignore_files)
 
     discovered_files = set()
 

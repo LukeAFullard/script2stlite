@@ -54,6 +54,20 @@ script2stlite.convert_app(
 
 This will generate `My_Cool_App.html` in `my_app_folder`. It will automatically include `helper.py`, `data.csv`, `images/logo.png`, and any other file present in the folder.
 
+### Excluding Files (New in v0.3.1)
+
+You can explicitly exclude specific files or directories from being bundled by passing lists to `ignore_files` and `ignore_dirs`. These are **added** to the default exclusions.
+
+```python
+script2stlite.convert_app(
+    directory="my_app_folder",
+    app_name="My Cool App",
+    entrypoint="app.py",
+    ignore_files=["secrets.txt", "temp_data.csv"],
+    ignore_dirs=["private_data"]
+)
+```
+
 ## Features
 
 *   **One-Step Conversion**: Convert straight from Python code without configuration files.
@@ -127,6 +141,8 @@ APP_FILES:  #each file separated by a '-'. Can be .py files or other filetypes t
 *   `APP_ENTRYPOINT`: `home.py` - This is the main script for the Streamlit app.
 *   `CONFIG`: `false` (or a path like `.streamlit/config.toml`) - Specifies an optional Streamlit configuration file. If a path is provided, it must point to a TOML file. Set to `false` if no configuration file is used. An example using a TOML config can be found in `example/Example_6_vizzu`.
 *   `APP_FILES`: Includes `functions.py` (a supporting Python module) and `assets/image.jpg` (an image asset).
+*   `IGNORE_FILES` (Optional): List of specific files to exclude from auto-discovery (e.g., `["secrets.txt"]`).
+*   `IGNORE_DIRS` (Optional): List of directory names to exclude (e.g., `["private_data"]`).
 
 ### 3. Review the Streamlit Application Code
 

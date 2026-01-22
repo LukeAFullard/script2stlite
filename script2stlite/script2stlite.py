@@ -56,7 +56,9 @@ def _s2s_convert_core(
     directory: str,
     stlite_version: Optional[str] = None,
     pyodide_version: Optional[str] = None,
-    packages: Optional[Dict[str, str]] = None
+    packages: Optional[Dict[str, str]] = None,
+    ignore_dirs: Optional[list] = None,
+    ignore_files: Optional[list] = None
 ) -> None:
     """
     Core logic for converting a Streamlit application to stlite HTML.
@@ -73,6 +75,10 @@ def _s2s_convert_core(
         Specific Pyodide version to use.
     packages : Optional[Dict[str, str]]
         Package version overrides.
+    ignore_dirs : Optional[list]
+        List of directory names to ignore during auto-discovery.
+    ignore_files : Optional[list]
+        List of file names to ignore during auto-discovery.
     """
     #1. load versions
     stylesheet_versions, stylesheet_top_version, js_versions, js_top_version, pyodide_versions, pyodide_top_version = load_all_versions()
@@ -120,7 +126,12 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     # --- Auto Discovery ---
     # We now discover ALL files in the directory (respecting default ignores)
     print(f"* Starting discovery of all files in {directory}...")
-    discovered_files = discover_all_files(directory)
+
+    # Convert lists to sets for discovery.py
+    ignore_dirs_set = set(ignore_dirs) if ignore_dirs else None
+    ignore_files_set = set(ignore_files) if ignore_files else None
+
+    discovered_files = discover_all_files(directory, ignore_dirs=ignore_dirs_set, ignore_files=ignore_files_set)
 
     for f in discovered_files:
         if f not in app_files:
@@ -172,7 +183,9 @@ def s2s_convert(
         directory=directory,
         stlite_version=stlite_version,
         pyodide_version=pyodide_version,
-        packages=packages
+        packages=packages,
+        ignore_dirs=settings.get('IGNORE_DIRS'),
+        ignore_files=settings.get('IGNORE_FILES')
     )
 
 
@@ -249,7 +262,9 @@ class Script2StliteConverter:
         extra_files: Optional[list] = None,
         stlite_version: Optional[str] = None,
         pyodide_version: Optional[str] = None,
-        packages: Optional[Dict[str, str]] = None
+        packages: Optional[Dict[str, str]] = None,
+        ignore_dirs: Optional[list] = None,
+        ignore_files: Optional[list] = None
     ) -> None:
         """
         Converts a Streamlit application using parameters directly, skipping settings.yaml.
@@ -274,6 +289,10 @@ class Script2StliteConverter:
             The specific version of Pyodide to use.
         packages : Optional[Dict[str, str]], optional
             Package version overrides.
+        ignore_dirs : Optional[list], optional
+            List of directory names to ignore during auto-discovery.
+        ignore_files : Optional[list], optional
+            List of file names to ignore during auto-discovery.
         """
         if idbfs_mountpoints is None:
             idbfs_mountpoints = ['/mnt']
@@ -304,7 +323,9 @@ class Script2StliteConverter:
             directory=self.directory,
             stlite_version=stlite_version,
             pyodide_version=pyodide_version,
-            packages=packages
+            packages=packages,
+            ignore_dirs=ignore_dirs,
+            ignore_files=ignore_files
         )
 
 def convert_app(
@@ -317,7 +338,9 @@ def convert_app(
     extra_files: Optional[list] = None,
     stlite_version: Optional[str] = None,
     pyodide_version: Optional[str] = None,
-    packages: Optional[Dict[str, str]] = None
+    packages: Optional[Dict[str, str]] = None,
+    ignore_dirs: Optional[list] = None,
+    ignore_files: Optional[list] = None
 ) -> None:
     """
     Shortcut function to convert a Streamlit app in one step.
@@ -344,6 +367,10 @@ def convert_app(
         The specific version of Pyodide to use.
     packages : Optional[Dict[str, str]], optional
         Package version overrides.
+    ignore_dirs : Optional[list], optional
+        List of directory names to ignore during auto-discovery.
+    ignore_files : Optional[list], optional
+        List of file names to ignore during auto-discovery.
     """
     converter = Script2StliteConverter(directory=directory)
     converter.convert_from_entrypoint(
@@ -355,5 +382,7 @@ def convert_app(
         extra_files=extra_files,
         stlite_version=stlite_version,
         pyodide_version=pyodide_version,
-        packages=packages
+        packages=packages,
+        ignore_dirs=ignore_dirs,
+        ignore_files=ignore_files
     )
