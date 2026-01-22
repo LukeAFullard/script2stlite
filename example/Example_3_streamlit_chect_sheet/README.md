@@ -1,25 +1,35 @@
-# Streamlit Cheat Sheet - `stlite` Conversion Example
+# Example 3: Streamlit Cheat Sheet
 
-This directory contains an example of a Streamlit application, the "Streamlit Cheat Sheet," which has been converted into a self-contained `stlite` application using the `script2stlite` package.
+A conversion of the official Streamlit cheat sheet.
 
-## `script2stlite` and `stlite`
+## One-Step Conversion (Recommended)
 
-The `script2stlite` package is a useful tool for converting existing Streamlit applications into `stlite` applications. `stlite` allows you to run Streamlit apps entirely in the browser, packaged as a single HTML file. This is incredibly beneficial as it eliminates the need for traditional server-side hosting, making deployment simpler and more accessible.
+1.  **Prerequisites:**
+    *   Ensure `requirements.txt` is present.
 
-With `stlite`, your Streamlit app becomes a portable HTML file that can be easily shared or hosted on static web hosting services like GitHub Pages.
+2.  **Convert:**
+    Run the following Python script:
 
-## Original Application Credit
+    ```python
+    import script2stlite
 
-The original "Streamlit Cheat Sheet" application was created by **Daniel Lewis**. We extend our gratitude to him for developing this excellent resource for the Streamlit community.
+    script2stlite.convert_app(
+        directory="example/Example_3_streamlit_chect_sheet",
+        app_name="Streamlit cheat sheet",
+        entrypoint="app.py"
+    )
+    ```
 
-You can find the original Streamlit application and its source code here:
-[https://github.com/daniellewisDL/streamlit-cheat-sheet](https://github.com/daniellewisDL/streamlit-cheat-sheet)  
+## Legacy Instructions
 
-You can find a version of the app **running on streamlit servers** here: [https://cheat-sheet.streamlit.app/](https://cheat-sheet.streamlit.app/).
-
-## Hosted `stlite` Version
-
-This converted `stlite` version of the Streamlit Cheat Sheet can be accessed here:
-[https://lukeafullard.github.io/script2stlite/example/Example_3_streamlit_chect_sheet/Streamlit_cheat_sheet.html](https://lukeafullard.github.io/script2stlite/example/Example_3_streamlit_chect_sheet/Streamlit_cheat_sheet.html)
-
-This demonstrates how `script2stlite` can transform a standard Streamlit app into a browser-runnable `stlite` app, maintaining its functionality without requiring a Python backend.
+1.  **Prepare:**
+    ```python
+    from script2stlite import Script2StliteConverter
+    converter = Script2StliteConverter("example/Example_3_streamlit_chect_sheet")
+    converter.prepare_folder()
+    ```
+2.  **Configure:** Edit `settings.yaml`.
+3.  **Convert:**
+    ```python
+    converter.convert()
+    ```

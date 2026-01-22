@@ -1,24 +1,36 @@
-# Vizzu Streamlit Example
+# Example 6: Vizzu Example (Custom Config)
 
-This directory contains an example of a Streamlit application using Vizzu for interactive data visualizations.
+This example shows how to include a `config.toml` file.
 
-## Original Application
+## One-Step Conversion (Recommended)
 
-The original Streamlit application was developed by Germán Andrés and Castaño Vásquez.
+1.  **Prerequisites:**
+    *   Ensure `requirements.txt` is present.
 
-- **Original GitHub Repository:** [gcastano/Streamlit-Demo-Apps/tree/main/StreamlitVizzu](https://github.com/gcastano/Streamlit-Demo-Apps/tree/main/StreamlitVizzu)
-- **Original Hosted Streamlit App:** [paris2024-olpympics-summary.streamlit.app/](https://paris2024-olpympics-summary.streamlit.app/)
+2.  **Convert:**
+    Run the following Python script:
 
-## stlite Version
+    ```python
+    import script2stlite
 
-This example has been adapted to run as a static web page using `script2stlite`.
+    script2stlite.convert_app(
+        directory="example/Example_6_vizzu",
+        app_name="Vizzu example",
+        entrypoint="streamlitvizzu.py",
+        config=".streamlit/config.toml"  # Pass the config file path
+    )
+    ```
 
-- **stlite HTML Page:** [lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html](https://lukeafullard.github.io/script2stlite/example/Example_6_vizzu/Vizzu_example.html)
+## Legacy Instructions
 
-## Configuration Note
-
-This example demonstrates the use of a `config.toml` file. The `settings.yaml` for `script2stlite` includes the following entry to specify the configuration file:
-
-```yaml
-CONFIG: .streamlit/config.toml
-```
+1.  **Prepare:**
+    ```python
+    from script2stlite import Script2StliteConverter
+    converter = Script2StliteConverter("example/Example_6_vizzu")
+    converter.prepare_folder()
+    ```
+2.  **Configure:** Edit `settings.yaml` (set `CONFIG: .streamlit/config.toml`).
+3.  **Convert:**
+    ```python
+    converter.convert()
+    ```

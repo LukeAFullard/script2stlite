@@ -10,13 +10,13 @@
     <title>IDBFS File Browser</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.95.1/build/stlite.css"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.0.0/build/stlite.css"
     />
   </head>
   <body>
     <div id="root"></div>
     <script type="module">
-import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.95.1/build/stlite.js"
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.0.0/build/stlite.js"
 mount(
   {
 
@@ -24,7 +24,7 @@ mount(
     requirements: ['streamlit'],
     entrypoint: "home.py",
     idbfsMountpoints: ["/mnt"],
-    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js",
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.1/full/pyodide.js",
     files: {
 "home.py": `
 import streamlit as st
@@ -84,7 +84,7 @@ else:
                         st.error(f"Error deleting \`{file_path}\`: {e}")
 
 `,
-
+"README.md": Ou("IyBFeGFtcGxlIDk6IElEQkZTIEZpbGUgQnJvd3NlcgoKQSBmaWxlIGJyb3dzZXIgZm9yIHRoZSBwZXJzaXN0ZW50IElEQkZTIHN0b3JhZ2UuCgojIyBPbmUtU3RlcCBDb252ZXJzaW9uIChSZWNvbW1lbmRlZCkKCjEuICAqKlByZXJlcXVpc2l0ZXM6KioKICAgICogICBFbnN1cmUgYHJlcXVpcmVtZW50cy50eHRgIGlzIHByZXNlbnQuCgoyLiAgKipDb252ZXJ0OioqCiAgICBSdW4gdGhlIGZvbGxvd2luZyBQeXRob24gc2NyaXB0OgoKICAgIGBgYHB5dGhvbgogICAgaW1wb3J0IHNjcmlwdDJzdGxpdGUKCiAgICBzY3JpcHQyc3RsaXRlLmNvbnZlcnRfYXBwKAogICAgICAgIGRpcmVjdG9yeT0iZXhhbXBsZS9FeGFtcGxlXzlfaWRiZnNfZmlsZV9icm93c2VyIiwKICAgICAgICBhcHBfbmFtZT0iSURCRlMgRmlsZSBCcm93c2VyIiwKICAgICAgICBlbnRyeXBvaW50PSJob21lLnB5IiwKICAgICAgICBpZGJmc19tb3VudHBvaW50cz1bJy9tbnQnXSAjIFNwZWNpZnkgbW91bnRwb2ludHMKICAgICkKICAgIGBgYAoKIyMgTGVnYWN5IEluc3RydWN0aW9ucwoKMS4gICoqUHJlcGFyZToqKgogICAgYGBgcHl0aG9uCiAgICBmcm9tIHNjcmlwdDJzdGxpdGUgaW1wb3J0IFNjcmlwdDJTdGxpdGVDb252ZXJ0ZXIKICAgIGNvbnZlcnRlciA9IFNjcmlwdDJTdGxpdGVDb252ZXJ0ZXIoImV4YW1wbGUvRXhhbXBsZV85X2lkYmZzX2ZpbGVfYnJvd3NlciIpCiAgICBjb252ZXJ0ZXIucHJlcGFyZV9mb2xkZXIoKQogICAgYGBgCjIuICAqKkNvbmZpZ3VyZToqKiBFZGl0IGBzZXR0aW5ncy55YW1sYCAoc2V0IGBJREJGU19NT1VOVFBPSU5UUzogWycvbW50J11gKS4KMy4gICoqQ29udmVydDoqKgogICAgYGBgcHl0aG9uCiAgICBjb252ZXJ0ZXIuY29udmVydCgpCiAgICBgYGAK"),
 },
   },
   document.getElementById("root")

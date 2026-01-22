@@ -1,7 +1,8 @@
-from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file
+from .functions import load_all_versions,folder_exists,get_current_directory,create_directory,copy_file_from_subfolder,file_exists, load_yaml_from_file,create_html,write_text_file, parse_requirements
+from .discovery import discover_all_files
 import os
 from pathlib import Path
-from typing import Union, Optional, Dict
+from typing import Union, Optional, Dict, Any
 
 def s2s_prepare_folder(directory: Optional[str] = None) -> None:
     """
@@ -50,63 +51,30 @@ def s2s_prepare_folder(directory: Optional[str] = None) -> None:
     print(f"* Folder structure successfully created: {directory}. \n")
 
 
-def s2s_convert(
+def _s2s_convert_core(
+    settings: Dict[str, Any],
+    directory: str,
     stlite_version: Optional[str] = None,
     pyodide_version: Optional[str] = None,
-    directory: Optional[str] = None,
     packages: Optional[Dict[str, str]] = None
 ) -> None:
     """
-    Converts a Streamlit application project into a single HTML file using stlite.
-
-    This function performs the following steps:
-    1. Determines the target directory (current working directory if not specified).
-    2. Loads stlite, JavaScript, and Pyodide versions (uses latest if not specified).
-    3. Reads 'settings.yaml' from the target directory.
-    4. Updates settings with the chosen stlite, JS, and Pyodide versions.
-    5. Ensures the main app entrypoint is not duplicated in the app files list.
-    6. Validates that all files listed in settings exist.
-    7. Generates the HTML content using `create_html`.
-    8. Writes the generated HTML to a file named after the app_name in `settings.yaml`.
+    Core logic for converting a Streamlit application to stlite HTML.
 
     Parameters
     ----------
-    stlite_version : Optional[str], optional
-        The specific version of stlite to use (e.g., "0.46.0"). If None (default),
-        the latest available version is used. This also determines the default
-        JavaScript version.
-    pyodide_version : Optional[str], optional
-        The specific version of Pyodide to use. If None (default), the latest
-        available version compatible with the chosen stlite_version is used.
-    directory : Optional[str], optional
-        The root directory of the Streamlit application project. If None (default),
-        the current working directory is used. This directory must contain
-        'settings.yaml' and all application files.
-    packages : Optional[Dict[str, str]], optional
-        A dictionary mapping package names to specific versions, which can be used
-        to override versions specified in requirements. If None (default),
-        versions from requirements or latest available are used.
-
-    Returns
-    -------
-    None
-
-    Raises
-    ------
-    ValueError
-        - If the specified `directory` does not exist.
-        - If `stlite_version` is provided but not supported.
-        - If 'settings.yaml' is not found in the directory.
-        - If any file listed in 'settings.yaml' under 'APP_FILES' is not found.
+    settings : Dict[str, Any]
+        The application settings.
+    directory : str
+        The root directory of the application.
+    stlite_version : Optional[str]
+        Specific stlite version to use.
+    pyodide_version : Optional[str]
+        Specific Pyodide version to use.
+    packages : Optional[Dict[str, str]]
+        Package version overrides.
     """
-    #0. read/set directory
-    if directory is not None: #directory is provided
-        #check provided directory is valid
-        if not folder_exists(directory): raise ValueError(f'''* {directory} does not exist on this system.''')
-    else:  #nodirectory provided, use cd
-        directory = get_current_directory()  
-        print(f"* No user directory provided. Creating new s2stlite project in current directory ({directory}). \n")
-    #1. load settings
+    #1. load versions
     stylesheet_versions, stylesheet_top_version, js_versions, js_top_version, pyodide_versions, pyodide_top_version = load_all_versions()
     
     if stlite_version is None:
@@ -120,18 +88,48 @@ def s2s_convert(
     if (stylesheet is None) or (js is None):
         raise ValueError(f'''stlite_version ({stlite_version}) is not currently supported by script2stlite.
 Valid versions include: {list(stylesheet_versions.keys())}''')
-
-    #2. read settings yaml
-    if not file_exists(os.path.join(directory,'settings.yaml')): raise ValueError(f"* No settings file found in {directory}. Please run s2s_prepare_folder().")
-    settings = load_yaml_from_file(os.path.join(directory,'settings.yaml'))
     
     #Update css, js, pyodide versions into settings
     settings.update({"|STLITE_CSS|":stylesheet})
     settings.update({"|STLITE_JS|":js})
     settings.update({"|PYODIDE_VERSION|":pyodide})
+
+    # --- Auto Discovery: requirements.txt ---
+    req_file = os.path.join(directory, 'requirements.txt')
+    if os.path.isfile(req_file):
+        print(f"* Found requirements.txt in {directory}. Parsing...")
+        file_reqs = parse_requirements(req_file)
+
+        current_reqs = settings.get('APP_REQUIREMENTS')
+        if current_reqs is None:
+            current_reqs = []
+
+        # Merge requirements, avoiding exact duplicates
+        for r in file_reqs:
+            if r not in current_reqs:
+                current_reqs.append(r)
+                print(f"  - Added requirement from file: {r}")
+
+        settings['APP_REQUIREMENTS'] = current_reqs
     
     #if app entrypoint in app files, remove it! It will be used to replace |APP_HOME| in the html template.
     app_files = settings.get('APP_FILES', [])
+    if app_files is None:
+        app_files = []
+
+    # --- Auto Discovery ---
+    # We now discover ALL files in the directory (respecting default ignores)
+    print(f"* Starting discovery of all files in {directory}...")
+    discovered_files = discover_all_files(directory)
+
+    for f in discovered_files:
+        if f not in app_files:
+            app_files.append(f)
+            # print(f"  - Discovered file: {f}") # Can be verbose
+
+    # Update settings with discovered files so create_html uses them
+    settings['APP_FILES'] = app_files
+
     if settings.get('APP_ENTRYPOINT') in app_files:
         app_files.remove(settings.get('APP_ENTRYPOINT'))
     
@@ -142,6 +140,40 @@ Valid versions include: {list(stylesheet_versions.keys())}''')
     # 4. generate html
     html = create_html(directory,settings,packages=packages)
     write_text_file(os.path.join(directory,f'{settings.get("APP_NAME").replace(" ","_")}.html'), html)
+
+
+def s2s_convert(
+    stlite_version: Optional[str] = None,
+    pyodide_version: Optional[str] = None,
+    directory: Optional[str] = None,
+    packages: Optional[Dict[str, str]] = None
+) -> None:
+    """
+    Converts a Streamlit application project into a single HTML file using stlite.
+
+    See `_s2s_convert_core` for details on the conversion process.
+    This function primarily handles loading settings from `settings.yaml`.
+    """
+    #0. read/set directory
+    if directory is not None: #directory is provided
+        #check provided directory is valid
+        if not folder_exists(directory): raise ValueError(f'''* {directory} does not exist on this system.''')
+    else:  #nodirectory provided, use cd
+        directory = get_current_directory()
+        print(f"* No user directory provided. Creating new s2stlite project in current directory ({directory}). \n")
+
+    #1. read settings yaml
+    if not file_exists(os.path.join(directory,'settings.yaml')): raise ValueError(f"* No settings file found in {directory}. Please run s2s_prepare_folder().")
+    settings = load_yaml_from_file(os.path.join(directory,'settings.yaml'))
+
+    #2. Call core conversion
+    _s2s_convert_core(
+        settings=settings,
+        directory=directory,
+        stlite_version=stlite_version,
+        pyodide_version=pyodide_version,
+        packages=packages
+    )
 
 
 class Script2StliteConverter:
@@ -197,9 +229,6 @@ class Script2StliteConverter:
             The specific version of stlite to use. If None, latest is used.
         pyodide_version : Optional[str], optional
             The specific version of Pyodide to use. If None, latest is used.
-        directory : Optional[str], optional
-            The root directory of the Streamlit application project.
-            If None, current working directory is used.
         packages : Optional[Dict[str, str]], optional
             A dictionary to override package versions.
         """
@@ -209,3 +238,122 @@ class Script2StliteConverter:
             directory=self.directory,
             packages=packages
         )
+
+    def convert_from_entrypoint(
+        self,
+        app_name: str,
+        entrypoint: str,
+        config: Optional[str] = None,
+        shared_worker: bool = False,
+        idbfs_mountpoints: Optional[list] = None,
+        extra_files: Optional[list] = None,
+        stlite_version: Optional[str] = None,
+        pyodide_version: Optional[str] = None,
+        packages: Optional[Dict[str, str]] = None
+    ) -> None:
+        """
+        Converts a Streamlit application using parameters directly, skipping settings.yaml.
+
+        Parameters
+        ----------
+        app_name : str
+            The name of the application.
+        entrypoint : str
+            The entrypoint script filename (must be in the project directory).
+        config : Optional[str], optional
+            Path to streamlit config file (relative to project directory). Default None.
+        shared_worker : bool, optional
+            Whether to use SharedWorker mode. Default False.
+        idbfs_mountpoints : Optional[list], optional
+            List of mountpoints for IDBFS. Default None.
+        extra_files : Optional[list], optional
+            List of extra files to include manually. Default None.
+        stlite_version : Optional[str], optional
+            The specific version of stlite to use.
+        pyodide_version : Optional[str], optional
+            The specific version of Pyodide to use.
+        packages : Optional[Dict[str, str]], optional
+            Package version overrides.
+        """
+        if idbfs_mountpoints is None:
+            idbfs_mountpoints = ['/mnt']
+
+        if extra_files is None:
+            extra_files = []
+
+        # Construct settings dictionary
+        settings = {
+            'APP_NAME': app_name,
+            'APP_ENTRYPOINT': entrypoint,
+            'CONFIG': config,
+            'SHARED_WORKER': shared_worker,
+            'IDBFS_MOUNTPOINTS': idbfs_mountpoints,
+            'APP_FILES': extra_files,
+            'APP_REQUIREMENTS': [] # Will be populated by requirements.txt scan in core
+        }
+
+        # Check entrypoint existence here to fail fast?
+        # _s2s_convert_core checks discovery, but checking here is good practice.
+        if not os.path.isfile(os.path.join(self.directory, entrypoint)):
+            raise ValueError(f"Entrypoint file '{entrypoint}' not found in {self.directory}")
+
+        print(f"* Converting from entrypoint '{entrypoint}' in {self.directory}...")
+
+        _s2s_convert_core(
+            settings=settings,
+            directory=self.directory,
+            stlite_version=stlite_version,
+            pyodide_version=pyodide_version,
+            packages=packages
+        )
+
+def convert_app(
+    directory: str,
+    app_name: str,
+    entrypoint: str,
+    config: Optional[str] = None,
+    shared_worker: bool = False,
+    idbfs_mountpoints: Optional[list] = None,
+    extra_files: Optional[list] = None,
+    stlite_version: Optional[str] = None,
+    pyodide_version: Optional[str] = None,
+    packages: Optional[Dict[str, str]] = None
+) -> None:
+    """
+    Shortcut function to convert a Streamlit app in one step.
+
+    Parameters
+    ----------
+    directory : str
+        The root directory of the Streamlit application.
+    app_name : str
+        The name of the application.
+    entrypoint : str
+        The entrypoint script filename (must be in the directory).
+    config : Optional[str], optional
+        Path to streamlit config file (relative to directory). Default None.
+    shared_worker : bool, optional
+        Whether to use SharedWorker mode. Default False.
+    idbfs_mountpoints : Optional[list], optional
+        List of mountpoints for IDBFS. Default None.
+    extra_files : Optional[list], optional
+        List of extra files to include manually. Default None.
+    stlite_version : Optional[str], optional
+        The specific version of stlite to use.
+    pyodide_version : Optional[str], optional
+        The specific version of Pyodide to use.
+    packages : Optional[Dict[str, str]], optional
+        Package version overrides.
+    """
+    converter = Script2StliteConverter(directory=directory)
+    converter.convert_from_entrypoint(
+        app_name=app_name,
+        entrypoint=entrypoint,
+        config=config,
+        shared_worker=shared_worker,
+        idbfs_mountpoints=idbfs_mountpoints,
+        extra_files=extra_files,
+        stlite_version=stlite_version,
+        pyodide_version=pyodide_version,
+        packages=packages
+    )

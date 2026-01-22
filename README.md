@@ -13,13 +13,58 @@ This project was created to easily allow **existing** streamlit apps to be conve
 
 The creator of stlite and edit.share.stlite.net is [Yuichiro Tachibana (whitphx)](https://github.com/whitphx/stlite)
 
+## ⚠️ Security Warning: Clean Directory Requirement ⚠️
+
+**Please read this section carefully before using `script2stlite`.**
+
+Version 0.3.0+ uses an "Include All" strategy for bundling your application. This means:
+
+1.  **ALL FILES** in the directory you provide (and its subdirectories) will be bundled into the generated HTML file and **publicly accessible** to anyone who views the page.
+2.  **DO NOT** include secrets, API keys, passwords, or sensitive environment files (like `.env`, `secrets.toml`, `.pem`) in the directory you are converting.
+3.  **Clean Directory Principle**: We strongly recommend creating a dedicated "build" or "dist" directory for your app that contains **only** the files needed for the app to run.
+
+**Default Exclusions:**
+The following files and directories are excluded by default to keep the bundle clean, but you should not rely on this as your primary security control:
+*   **Directories**: `.git`, `__pycache__`, `venv`, `.venv`, `env`, `.mypy_cache`, `.pytest_cache`, `dist`, `build`, `.idea`, `.vscode`, `node_modules`
+*   **Files**: `.DS_Store`, `.gitignore`, `.env`
+
+## New in v0.3.0
+
+Version 0.3.0 introduces major simplifications to the workflow:
+
+1.  **Auto-Discovery**: The converter now automatically bundles **all files** in your project directory. This fixes issues with dynamic imports, f-strings, and complex asset paths.
+2.  **One-Step Conversion**: You can now convert an app without creating a `settings.yaml` file manually.
+
+### Quick Start (The New Way)
+
+You can convert your app in a single step using the top-level `convert_app` function.
+
+**Prerequisites:**
+*   A folder containing your Streamlit app (e.g., `app.py`).
+*   (Optional) A `requirements.txt` file listing your dependencies (e.g., `pandas`, `numpy`). If your app uses no external packages (other than Streamlit), this is not needed.
+
+**Example:**
+
+```python
+import script2stlite
+
+script2stlite.convert_app(
+    directory="my_app_folder",
+    app_name="My Cool App",
+    entrypoint="app.py"
+)
+```
+
+This will generate `My_Cool_App.html` in `my_app_folder`. It will automatically include `helper.py`, `data.csv`, `images/logo.png`, and any other file present in the folder.
+
 ## Features
 
-*   **Prepare Project Folders**: Initialize a directory with the necessary structure (`pages` subdirectory) and a template `settings.yaml` configuration file.
+*   **One-Step Conversion**: Convert straight from Python code without configuration files.
+*   **Full Directory Bundling**: automatically bundles all files in the directory, ensuring no missing assets or modules.
+*   **Prepare Project Folders**: Initialize a directory with the necessary structure (`pages` subdirectory) and a template `settings.yaml` configuration file (Legacy mode).
 *   **Convert to HTML**: Bundle your Streamlit application (main script, pages, requirements, and other assets) into a single HTML file.
 *   **Class-Based Conversion**: Offers a `Script2StliteConverter` class for an object-oriented approach to managing the conversion process.
 *   **Version Pinning**: Allows specifying particular versions of `stlite` and `Pyodide` to be used for the conversion.
-*   **Automatic Dependency Handling**: Reads your Python package requirements from `settings.yaml` and includes them in the `stlite` build.
 
 ## Installation
 
@@ -39,9 +84,11 @@ pip install script2stlite
 * [File Persistence Demo](https://lukeafullard.github.io/script2stlite/example/Example_8_file_persistence/File_Persistence_Demo.html)
 * [IDBFS File Browser](https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html)
 
-## Quick Start with `Example_0_simple_app`
+## Legacy / Advanced Configuration
 
-This quick start guide uses the example application located in the `example/Example_0_simple_app` directory of this repository.
+The original workflow using `settings.yaml` is still fully supported and recommended for complex configurations or when you need explicit control over dependencies.
+
+**Note:** Even when using this legacy method, the new **Full Directory Bundling** is active! All files in the directory will be merged with your manual `settings.yaml` configuration.
 
 ### 1. Initialize the Converter and Prepare the Folder
 
@@ -119,11 +166,6 @@ converter.convert()
 # inside the 'example/Example_0_simple_app' directory.
 ```
 
-After running this, you will find `my_simple_app.html` in the `example/Example_0_simple_app` directory. You can open this file in any modern web browser to run the Streamlit application.
-
-You can also view a hosted version of this example here:
-[https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html](https://lukeafullard.github.io/script2stlite/example/Example_0_simple_app/my_simple_app.html)
-
 ## Other Examples
 
 For more examples (as they become available), please check the `example` directory in this repository. Each subfolder there will typically contain a self-contained Streamlit application ready for conversion with `script2stlite`.
@@ -132,15 +174,16 @@ For more examples (as they become available), please check the `example` directo
 
 `script2stlite` streamlines the process of packaging your Streamlit application for browser-only execution. Here's a simplified overview:
 
-1.  **Configuration Reading**: The tool reads your project's structure and dependencies from the `settings.yaml` file. This includes your main application script (`APP_ENTRYPOINT`), any additional pages or Python modules (`APP_FILES`), and Python package requirements (`APP_REQUIREMENTS`).
-2.  **File Aggregation**: It collects all specified Python scripts, data files, and assets. Python files and text-based data files are read as strings. Binary files (like images) are base64 encoded.
-3.  **HTML Generation**: `script2stlite` uses an HTML template that is pre-configured to use `stlite`. It injects your application's details into this template:
+1.  **Configuration Reading**: The tool reads your project's structure and dependencies from the `settings.yaml` file (or arguments passed to `convert_from_entrypoint`). This includes your main application script (`APP_ENTRYPOINT`), any additional pages or Python modules (`APP_FILES`), and Python package requirements (`APP_REQUIREMENTS`).
+2.  **Auto Discovery**: It parses your code to automatically find imported modules and assets, and reads `requirements.txt` to find dependencies.
+3.  **File Aggregation**: It collects all specified Python scripts, data files, and assets. Python files and text-based data files are read as strings. Binary files (like images) are base64 encoded.
+4.  **HTML Generation**: `script2stlite` uses an HTML template that is pre-configured to use `stlite`. It injects your application's details into this template:
     *   The content of your main Streamlit script (`APP_ENTRYPOINT`) becomes the primary script executed by `stlite`.
     *   Other Python files and data files from `APP_FILES` are embedded into the `stlite` virtual filesystem, making them accessible to your application at runtime.
     *   The package `APP_REQUIREMENTS` are listed for `stlite` to install via `micropip` from Pyodide.
     *   Links to the necessary `stlite` CSS and JavaScript bundles, and the specified Pyodide version, are included.
-4.  **Bundling**: The result is a single HTML file. This file contains your entire Streamlit application (code, data, assets) and the `stlite` runtime environment.
-5.  **Browser Execution**: When you open this HTML file in a web browser:
+5.  **Bundling**: The result is a single HTML file. This file contains your entire Streamlit application (code, data, assets) and the `stlite` runtime environment.
+6.  **Browser Execution**: When you open this HTML file in a web browser:
     *   `stlite` initializes Pyodide, which is a port of Python to WebAssembly.
     *   The specified Python packages are downloaded and installed into the Pyodide environment.
     *   Your Streamlit application code is executed by the Python interpreter running in the browser.
