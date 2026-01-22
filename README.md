@@ -1,3 +1,6 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/LukeAFullard/script2stlite/main/assets/s2s_logo.png" alt="Script2stlite Logo" width="95%"/>
+
 # script2stlite
 
 **Note:** This project is continuously under development.
