@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/LukeAFullard/script2stlite/main/assets/s2s_logo.png" alt="Script2stlite Logo" width="75%"/>
 
 # script2stlite
-
+</div>
 **Note:** This project is continuously under development.
 
 A Python package to convert Streamlit applications into single, self-contained HTML files that run entirely in the browser using [stlite](https://github.com/whitphx/stlite).
