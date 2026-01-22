@@ -23,7 +23,7 @@ mount(
     streamlitConfig : {},
     requirements: ['streamlit', 'Pillow'],
     entrypoint: "app.py",
-    idbfsMountpoints: [".mnt"],
+    idbfsMountpoints: ["/mnt"],
     pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.1/full/pyodide.js",
     files: {
 "app.py": `
@@ -70,7 +70,7 @@ st.markdown("Redirecting to Home page...")
 st.switch_page("pages/01_Home.py")
 
 `,
-"README.md": Ou("IyBFeGFtcGxlIDE6IE11bHRpLVBhZ2UgSW1hZ2UgRWRpdG9yCgpUaGlzIGV4YW1wbGUgZGVtb25zdHJhdGVzIGhvdyB0byBjb252ZXJ0IGEgbXVsdGktcGFnZSBTdHJlYW1saXQgYXBwbGljYXRpb24gd2l0aCBpbWFnZSBwcm9jZXNzaW5nIGNhcGFiaWxpdGllcyAodXNpbmcgUGlsbG93KSBpbnRvIGEgc3RhbmRhbG9uZSBIVE1MIGZpbGUuCgojIyBPbmUtU3RlcCBDb252ZXJzaW9uIChSZWNvbW1lbmRlZCkKCkVuc3VyZSB5b3UgaGF2ZSB5b3VyIGByZXF1aXJlbWVudHMudHh0YCByZWFkeToKYGBgdGV4dApzdHJlYW1saXQKUGlsbG93CmBgYAoKQ3JlYXRlIGEgYnVpbGQgc2NyaXB0IChlLmcuLCBgYnVpbGQucHlgKToKCmBgYHB5dGhvbgppbXBvcnQgc2NyaXB0MnN0bGl0ZQoKc2NyaXB0MnN0bGl0ZS5jb252ZXJ0X2FwcCgKICAgIGRpcmVjdG9yeT0iZXhhbXBsZS9FeGFtcGxlXzFfbXVsdGlfcGFnZV9pbWFnZV9lZGl0b3IiLAogICAgYXBwX25hbWU9IkltYWdlIEVkaXRvciIsCiAgICBlbnRyeXBvaW50PSJhcHAucHkiCikKYGBgCgpSdW4gaXQgdG8gZ2VuZXJhdGUgYEltYWdlX0VkaXRvci5odG1sYC4KCiMjIEZlYXR1cmVzCi0gKipNdWx0aS1wYWdlIHN1cHBvcnQqKjogRGVtb25zdHJhdGVzIGhvdyBgcGFnZXMvYCBkaXJlY3RvcnkgaXMgYXV0b21hdGljYWxseSBoYW5kbGVkLgotICoqRXh0ZXJuYWwgbGlicmFyaWVzKio6IFVzZXMgYFBpbGxvd2AgZm9yIGltYWdlIG1hbmlwdWxhdGlvbi4KLSAqKkFzc2V0IGVtYmVkZGluZyoqOiBJbmNsdWRlcyBgYXNzZXRzL2ltYWdlLnBuZ2AgYXV0b21hdGljYWxseS4K"),"pages/03_Adjust_Image.py":`import streamlit as st
+"pages/03_Adjust_Image.py":`import streamlit as st
 from PIL import Image, ImageEnhance, ImageOps
 import io
 import os
@@ -398,7 +398,7 @@ st.markdown(
     We hope you enjoy using Image Editor Pro!
 """
 )
-`,"pages/.gitkeep": Ou(""),"assets/.gitkeep": Ou(""),
+`,"assets/.gitkeep": Ou(""),"README.md": Ou("IyBFeGFtcGxlIDE6IE11bHRpLVBhZ2UgSW1hZ2UgRWRpdG9yCgpUaGlzIGV4YW1wbGUgZGVtb25zdHJhdGVzIGhvdyB0byBjb252ZXJ0IGEgbXVsdGktcGFnZSBTdHJlYW1saXQgYXBwbGljYXRpb24gd2l0aCBpbWFnZSBwcm9jZXNzaW5nIGNhcGFiaWxpdGllcyAodXNpbmcgUGlsbG93KSBpbnRvIGEgc3RhbmRhbG9uZSBIVE1MIGZpbGUuCgojIyBPbmUtU3RlcCBDb252ZXJzaW9uIChSZWNvbW1lbmRlZCkKCkVuc3VyZSB5b3UgaGF2ZSB5b3VyIGByZXF1aXJlbWVudHMudHh0YCByZWFkeToKYGBgdGV4dApzdHJlYW1saXQKUGlsbG93CmBgYAoKQ3JlYXRlIGEgYnVpbGQgc2NyaXB0IChlLmcuLCBgYnVpbGQucHlgKToKCmBgYHB5dGhvbgppbXBvcnQgc2NyaXB0MnN0bGl0ZQoKc2NyaXB0MnN0bGl0ZS5jb252ZXJ0X2FwcCgKICAgIGRpcmVjdG9yeT0iZXhhbXBsZS9FeGFtcGxlXzFfbXVsdGlfcGFnZV9pbWFnZV9lZGl0b3IiLAogICAgYXBwX25hbWU9IkltYWdlIEVkaXRvciIsCiAgICBlbnRyeXBvaW50PSJhcHAucHkiCikKYGBgCgpSdW4gaXQgdG8gZ2VuZXJhdGUgYEltYWdlX0VkaXRvci5odG1sYC4KCiMjIEZlYXR1cmVzCi0gKipNdWx0aS1wYWdlIHN1cHBvcnQqKjogRGVtb25zdHJhdGVzIGhvdyBgcGFnZXMvYCBkaXJlY3RvcnkgaXMgYXV0b21hdGljYWxseSBoYW5kbGVkLgotICoqRXh0ZXJuYWwgbGlicmFyaWVzKio6IFVzZXMgYFBpbGxvd2AgZm9yIGltYWdlIG1hbmlwdWxhdGlvbi4KLSAqKkFzc2V0IGVtYmVkZGluZyoqOiBJbmNsdWRlcyBgYXNzZXRzL2ltYWdlLnBuZ2AgYXV0b21hdGljYWxseS4K"),"pages/.gitkeep": Ou(""),
 },
   },
   document.getElementById("root")
