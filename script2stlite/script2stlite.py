@@ -276,7 +276,7 @@ class Script2StliteConverter:
             Package version overrides.
         """
         if idbfs_mountpoints is None:
-            idbfs_mountpoints = ['.mnt']
+            idbfs_mountpoints = ['/mnt']
 
         if extra_files is None:
             extra_files = []
