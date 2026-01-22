@@ -19,6 +19,16 @@ EXAMPLE_CONFIGS = {
         "app_name": "Current BTC vs USD Price Tracker",
         "entrypoint": "app.py",
         "config": None
+    },
+    "Example_8_file_persistence": {
+        "app_name": "File Persistence Demo",
+        "entrypoint": "home.py",
+        "config": None
+    },
+    "Example_9_idbfs_file_browser": {
+        "app_name": "IDBFS File Browser",
+        "entrypoint": "home.py",
+        "config": None
     }
 }
 
