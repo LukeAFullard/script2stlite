@@ -10,13 +10,13 @@
     <title>IDBFS File Browser</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.0.0/build/stlite.css"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.92.0/build/stlite.css"
     />
   </head>
   <body>
     <div id="root"></div>
     <script type="module">
-import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.0.0/build/stlite.js"
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.92.0/build/stlite.js"
 mount(
   {
 
@@ -24,7 +24,7 @@ mount(
     requirements: ['streamlit'],
     entrypoint: "home.py",
     idbfsMountpoints: ["/mnt"],
-    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.1/full/pyodide.js",
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js",
     files: {
 "home.py": `
 import streamlit as st
