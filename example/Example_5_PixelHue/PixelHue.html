@@ -10,19 +10,21 @@
     <title>PixelHue</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.83.1/build/stlite.css"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.92.0/build/stlite.css"
     />
   </head>
   <body>
     <div id="root"></div>
     <script type="module">
-import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.83.1/build/stlite.js"
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.92.0/build/stlite.js"
 mount(
   {
+
     streamlitConfig : {},
-    requirements: ['streamlit', 'scikit-learn==1.6.1', 'numpy', 'pillow'],
+    requirements: ['streamlit', 'scikit-learn==1.7.0', 'numpy', 'pillow'],
     entrypoint: "main.py",
-    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js",
+
+    pyodideUrl: "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js",
     files: {
 "main.py": `
 import streamlit as st
@@ -79,7 +81,7 @@ def extract(img, n=9):
     sorted_idx = np.argsort(-counts)
     centers = centers[sorted_idx]
     palette = [f"#{int(r):02x}{int(g):02x}{int(b):02x}".upper() for r, g, b in centers]
-    return palette`,
+    return palette`,"settings.yaml": Ou("QVBQX05BTUU6ICJQaXhlbEh1ZSIgICNnaXZlIHlvdXIgYXBwIGEgbmljZSBuYW1lCkFQUF9SRVFVSVJFTUVOVFM6ICNhcHAgcmVxdWlyZW1lbnRzIHNlcGFyYXRlZCBieSBhICctJyBvbiBlYWNoIG5ldyBsaW5lLiBSZXF1aXJlbWVudHMgTVVTVCBiZSBjb21wYXRpYmxlIHdpdGggcHlvZGlkZS4gU3VnZ2VzdCBzcGVjaWZ5aW5nIHZlcnNpb25zLgogIC0gc3RyZWFtbGl0CiAgLSBzY2lraXQtbGVhcm49PTEuNy4wCiAgLSBudW1weQogIC0gcGlsbG93CkFQUF9FTlRSWVBPSU5UOiBtYWluLnB5ICNlbnRyeXBvaW50IHRvIGFwcCAtIGNoYW5nZSB0aGlzIHRvIHlvdXIgbWFpbiBweXRob24gZmlsZQpDT05GSUc6IGZhbHNlCkFQUF9GSUxFUzogICNlYWNoIGZpbGUgc2VwYXJhdGVkIGJ5IGEgJy0nLiBDYW4gYmUgLnB5IGZpbGVzIG9yIG90aGVyIGZpbGV0eXBlcyB0aGF0IHdpbGwgYmUgY29udmVydGVkIHRvIGJpbmFyeSBhbmQgZW1iZWRlZCBpbiB0aGUgaHRtbC4KICAtIGtvYWxhLnBuZwogIC0gcGFsZXR0ZV9leHRyYWN0b3IucHkK"),"README.md": Ou("IyBFeGFtcGxlIDU6IFBpeGVsSHVlIChNTCBFeGFtcGxlKQoKQW4gZXhhbXBsZSB1c2luZyBzY2lraXQtbGVhcm4gZm9yIGltYWdlIGNvbG9yIGV4dHJhY3Rpb24uCgojIyBPbmUtU3RlcCBDb252ZXJzaW9uIChSZWNvbW1lbmRlZCkKCjEuICAqKlByZXJlcXVpc2l0ZXM6KioKICAgICogICBFbnN1cmUgYHJlcXVpcmVtZW50cy50eHRgIGlzIHByZXNlbnQuCgoyLiAgKipDb252ZXJ0OioqCiAgICBSdW4gdGhlIGZvbGxvd2luZyBQeXRob24gc2NyaXB0OgoKICAgIGBgYHB5dGhvbgogICAgaW1wb3J0IHNjcmlwdDJzdGxpdGUKCiAgICBzY3JpcHQyc3RsaXRlLmNvbnZlcnRfYXBwKAogICAgICAgIGRpcmVjdG9yeT0iZXhhbXBsZS9FeGFtcGxlXzVfUGl4ZWxIdWUiLAogICAgICAgIGFwcF9uYW1lPSJQaXhlbEh1ZSIsCiAgICAgICAgZW50cnlwb2ludD0ibWFpbi5weSIKICAgICkKICAgIGBgYAoKIyMgTGVnYWN5IEluc3RydWN0aW9ucwoKMS4gICoqUHJlcGFyZToqKgogICAgYGBgcHl0aG9uCiAgICBmcm9tIHNjcmlwdDJzdGxpdGUgaW1wb3J0IFNjcmlwdDJTdGxpdGVDb252ZXJ0ZXIKICAgIGNvbnZlcnRlciA9IFNjcmlwdDJTdGxpdGVDb252ZXJ0ZXIoImV4YW1wbGUvRXhhbXBsZV81X1BpeGVsSHVlIikKICAgIGNvbnZlcnRlci5wcmVwYXJlX2ZvbGRlcigpCiAgICBgYGAKMi4gICoqQ29uZmlndXJlOioqIEVkaXQgYHNldHRpbmdzLnlhbWxgLgozLiAgKipDb252ZXJ0OioqCiAgICBgYGBweXRob24KICAgIGNvbnZlcnRlci5jb252ZXJ0KCkKICAgIGBgYAo="),
 },
   },
   document.getElementById("root")
