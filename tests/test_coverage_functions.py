@@ -214,3 +214,25 @@ def test_create_html_with_valid_config(tmp_path):
         # Check if config was processed and flattened
         assert "primaryColor" in html
         assert "#F63366" in html
+
+def test_replace_text():
+    """Test replace_text function."""
+    from script2stlite.functions import replace_text
+
+    # Test with stlite punctuation (default)
+    text = "replace |THIS|"
+    result = replace_text(text, "|THIS|", "that")
+    assert result == "replace `that`,"
+
+    # Test without stlite punctuation
+    result = replace_text(text, "|THIS|", "that", add_stlite_punctuation=False)
+    assert result == "replace that"
+
+def test_load_toml_from_file_happy_path(tmp_path):
+    """Test loading a valid TOML file."""
+    f = tmp_path / "valid.toml"
+    f.write_text('title = "TOML Example"\n[owner]\nname = "Tom Preston-Werner"', encoding="utf-8")
+
+    data = load_toml_from_file(f)
+    assert data["title"] == "TOML Example"
+    assert data["owner"]["name"] == "Tom Preston-Werner"
