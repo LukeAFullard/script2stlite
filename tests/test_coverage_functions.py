@@ -14,7 +14,9 @@ from script2stlite.functions import (
     create_directory,
     copy_file_from_subfolder,
     load_text_from_subfolder,
-    create_html
+    create_html,
+    get_current_directory,
+    write_text_file
 )
 
 def test_get_value_of_max_key_empty():
@@ -91,6 +93,21 @@ def test_parse_requirements_error(tmp_path):
          reqs = parse_requirements(f)
          assert reqs == []
 
+def test_parse_requirements_happy_path(tmp_path):
+    """Test parse_requirements reads file correctly."""
+    f = tmp_path / "reqs.txt"
+    f.write_text("numpy\npandas>=1.0\n# comment\n", encoding="utf-8")
+
+    reqs = parse_requirements(f)
+    assert "numpy" in reqs
+    assert "pandas>=1.0" in reqs
+    assert len(reqs) == 2
+
+def test_parse_requirements_missing_file():
+    """Test parse_requirements returns empty list if file does not exist."""
+    reqs = parse_requirements("non_existent_requirements.txt")
+    assert reqs == []
+
 def test_load_text_from_file_error(tmp_path):
     """Test load_text_from_file raises RuntimeError on read error."""
     f = tmp_path / "text.txt"
@@ -165,3 +182,35 @@ def test_create_html_errors(tmp_path):
     with patch("script2stlite.functions.load_text_from_subfolder", return_value="TEMPLATE"):
          with pytest.raises(ValueError, match="APP CONFIG must be a .toml file"):
              create_html(directory, settings)
+
+def test_get_current_directory():
+    """Test get_current_directory returns current directory."""
+    assert get_current_directory() == os.getcwd()
+
+def test_write_text_file_error(tmp_path):
+    """Test write_text_file handles IOError."""
+    # We can mock open to raise IOError
+    with patch("builtins.open", side_effect=IOError("Write error")):
+        # Should catch and print error
+        write_text_file("some_file.txt", "content")
+
+def test_create_html_with_valid_config(tmp_path):
+    """Test create_html correctly processes a valid toml config."""
+    directory = str(tmp_path)
+    (tmp_path / "app.py").write_text("print('hello')", encoding="utf-8")
+    (tmp_path / "config.toml").write_text('[theme]\nprimaryColor="#F63366"', encoding="utf-8")
+
+    settings = {
+        '|STLITE_CSS|': 'css',
+        '|STLITE_JS|': 'js',
+        '|PYODIDE_VERSION|': 'pyodide',
+        'APP_ENTRYPOINT': 'app.py',
+        'CONFIG': 'config.toml',
+        'APP_NAME': 'TestApp'
+    }
+
+    with patch("script2stlite.functions.load_text_from_subfolder", return_value="|CONFIG|"):
+        html = create_html(directory, settings)
+        # Check if config was processed and flattened
+        assert "primaryColor" in html
+        assert "#F63366" in html
