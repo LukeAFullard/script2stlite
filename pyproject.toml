@@ -17,6 +17,8 @@ tomli = "^2.0.0"
 pytest = "^8.2.2"
 pytest-playwright = "^0.5.0"
 pytest-mock = "^3.14.0"
+pytest-cov = "4.1.0"
+streamlit = {version = "1.36.0", python = ">=3.8, !=3.9.7"}
 
 [build-system]
 requires = ["poetry-core"]
