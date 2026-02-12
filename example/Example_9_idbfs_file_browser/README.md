@@ -1,36 +1,114 @@
-# Example 9: IDBFS File Browser
+# Example 9: IDBFS File Browser - Accessing Persistent Storage
 
-A file browser for the persistent IDBFS storage.
+This example serves as a companion to **Example 8: File Persistence Demo**. Its purpose is to demonstrate that files written to an `IDBFS` mount point are not only persistent within a single application but can also be accessed by other `stlite` applications running on the same domain.
+
+This application will list the contents of the `/mnt` directory, which is configured to be a persistent storage area using the browser's IndexedDB.
+
+`script2stlite` is a tool that packages your Streamlit application, along with its dependencies, into an HTML file that can be run in a web browser using [stlite](https://github.com/whitphx/stlite), without needing a Python backend server.
+
+## Live Demo
+
+You can view the output of this specific example hosted on GitHub Pages here: [https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html](https://lukeafullard.github.io/script2stlite/example/Example_9_idbfs_file_browser/IDBFS_File_Browser.html)
+
+---
 
 ## One-Step Conversion (Recommended)
 
-1.  **Prerequisites:**
-    *   Ensure `requirements.txt` is present.
+As of version 0.3.0, you can convert your app in a single step using the top-level `convert_app` function.
 
-2.  **Convert:**
-    Run the following Python script:
+### 1. Prerequisites
 
-    ```python
-    import script2stlite
+Ensure `requirements.txt` is present in the directory.
 
-    script2stlite.convert_app(
-        directory="example/Example_9_idbfs_file_browser",
-        app_name="IDBFS File Browser",
-        entrypoint="home.py",
-        idbfs_mountpoints=['/mnt'] # Specify mountpoints
-    )
-    ```
+### 2. Run the Conversion
 
-## Legacy Instructions
+Create a build script (e.g., `build.py`) and run it. Note how we specify the mount points:
 
-1.  **Prepare:**
-    ```python
-    from script2stlite import Script2StliteConverter
-    converter = Script2StliteConverter("example/Example_9_idbfs_file_browser")
-    converter.prepare_folder()
-    ```
-2.  **Configure:** Edit `settings.yaml` (set `IDBFS_MOUNTPOINTS: ['/mnt']`).
-3.  **Convert:**
-    ```python
-    converter.convert()
-    ```
+```python
+import script2stlite
+
+script2stlite.convert_app(
+    directory="example/Example_9_idbfs_file_browser",
+    app_name="IDBFS File Browser",
+    entrypoint="home.py",
+    idbfs_mountpoints=['/mnt'] # Specify mountpoints
+)
+```
+
+Run it to generate `IDBFS_File_Browser.html`.
+
+---
+
+## Key Features Demonstrated
+
+1.  **Shared Persistent Storage**: This example confirms that the `IDBFS_MOUNTPOINTS` provides a shared and persistent filesystem. By using the same mount point (`/mnt`) as Example 8, this application can access and display the files created by the other.
+2.  **Inter-App Communication via Filesystem**: This demonstrates a powerful pattern for `stlite` applications: using the persistent filesystem as a way for different apps to share data or state without a server.
+3.  **Reading Directory Contents**: The `home.py` script uses standard Python `os.walk()` to traverse the `/mnt` directory and list its contents, showing how to interact with the persistent filesystem.
+4.  **Deleting Files from Persistent Storage**: The application includes a "Delete" button for each file, demonstrating how to remove files from the `IDBFS` filesystem using `os.remove()`. This completes the showcase of CRUD (Create, Read, Update, Delete) operations on the persistent storage when combined with Example 8.
+
+## Application Structure
+
+The IDBFS File Browser application has a simple structure:
+
+-   `home.py`: The main Streamlit script that lists files and directories within the `/mnt` directory and provides an option to delete files.
+-   `settings.yaml`: The configuration file for `script2stlite`, which specifies the same `IDBFS_MOUNTPOINTS` as Example 8.
+
+---
+
+## Legacy Instructions (Manual Configuration)
+
+If you prefer explicit control over every file included, or are using an older version of `script2stlite`, you can use the original process with `settings.yaml`.
+
+### 1. Run Example 8 First
+
+Before running this application, you must first run **Example 8: File Persistence Demo** at least once. This will create the `/mnt/log.txt` file in your browser's IndexedDB.
+
+### 2. Install `script2stlite`
+
+Ensure you have `script2stlite` installed. If not, you can typically install it using pip:
+
+```bash
+pip install script2stlite
+```
+*(Note: Refer to the main project README for the most up-to-date installation instructions.)*
+
+### 3. Review and Modify `settings.yaml`
+
+The `settings.yaml` file for this example is:
+
+```yaml
+APP_NAME: "IDBFS File Browser"
+APP_REQUIREMENTS:
+  - streamlit
+APP_ENTRYPOINT: home.py
+CONFIG: "none"
+IDBFS_MOUNTPOINTS: ['/mnt']
+APP_FILES: []
+```
+
+Key aspects:
+-   **`IDBFS_MOUNTPOINTS`**: Crucially, this is set to `['/mnt']`, the same as in Example 8. This tells `stlite` to connect to the same persistent storage area.
+
+### 4. Convert the Application to HTML
+
+With `settings.yaml` configured, convert the application.
+
+```python
+from script2stlite import Script2StliteConverter
+
+# Initialize the converter
+converter = Script2StliteConverter("example/Example_9_idbfs_file_browser")
+
+# Convert the application
+converter.convert()
+
+print(f"Conversion complete! Check for '{converter.directory}/IDBFS_File_Browser.html'.")
+```
+
+### 5. View Your Application
+
+Open the generated `IDBFS_File_Browser.html` in a web browser. You should see `log.txt` listed as a file in the `/mnt` directory, along with a "Delete" button. You can click this button to remove the file from the persistent storage.
+
+---
+
+This example, in conjunction with Example 8, effectively demonstrates the power and utility of the `IDBFS_MOUNTPOINTS` feature for creating stateful, browser-based applications with `script2stlite`.
