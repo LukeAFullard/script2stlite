@@ -28,7 +28,7 @@ pandas
 
 ### 2. Run the Conversion
 
-Create a build script (e.g., `build.py`):
+Create a build script (e.g., `build.py`) and run it. Note how we specify the **stlite** and **pyodide** versions:
 
 ```python
 import script2stlite
@@ -36,7 +36,9 @@ import script2stlite
 script2stlite.convert_app(
     directory="example/Example_2_bitcoin_price_app",
     app_name="Current BTC vs USD Price Tracker",
-    entrypoint="app.py"
+    entrypoint="app.py",
+    stlite_version='0.82.0', # Optional: Pin stlite version
+    pyodide_version='0.26.4' # Optional: Pin pyodide version
 )
 ```
 
@@ -46,6 +48,7 @@ Run it to generate `Current_BTC_vs_USD_Price_Tracker.html`.
 - **Data Fetching**: Uses `requests` to get live data.
 - **Visualization**: Uses `plotly` for interactive charts.
 - **Pandas**: Uses `pandas` for data manipulation.
+- **Reproducibility**: Demonstrates how to pin `stlite` and `pyodide` versions.
 
 ---
 
